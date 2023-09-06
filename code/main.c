@@ -429,7 +429,7 @@ int f_800fdb08_bank_unk3(HeadSBNK *sb,int ind,int val)
 {
   BankEnt *e;
   
-  printf("bank unk %08X %d %d\n", sb, ind, val);
+  //printf("bank unk %08X %d %d\n", sb, ind, val);
   
   if (((sb != (HeadSBNK *)0x0) && (ind < sb->f_18_s)) && (-1 < ind)) {
     e = sb->f_20_ents + ind;
@@ -469,6 +469,41 @@ void f_80100b20_midi_zero1(void)
 
 
 
+
+
+int f_8009e8d0_vecs2_sht(VECTOR *v0,VECTOR *v1)
+{
+  int q1;
+  int q2;
+  int q3;
+  int q4;
+  
+  //printf("ves shi %p %p\n", v0, v1);
+  
+  q1 = v0->vx - v1->vx;
+  if (q1 < 0) {
+    q1 = v1->vx - v0->vx;
+  }
+  q4 = v0->vy - v1->vy;
+  if (q4 < 0) {
+    q4 = v1->vy - v0->vy;
+  }
+  q3 = v0->vz - v1->vz;
+  if (q3 < 0) {
+    q3 = v1->vz - v0->vz;
+  }
+  q2 = q1;
+  if (q1 < q4) {
+    q2 = q4;
+    q4 = q1;
+  }
+  q1 = q2;
+  if (q2 < q3) {
+    q1 = q3;
+    q3 = q2;
+  }
+  return q1 + (q4 + q3 >> 2);
+}
 
 
 
@@ -514,8 +549,6 @@ void f_800a86b4_fill_mem(uint *pp,int sz)
   int i;
   undefined *p;
   
-  //printf("fill mem %p %d\n", pp, sz);
-  
   i = sz + -1;
   if (sz != 0) {
     p = (undefined *)((int)pp + 6);
@@ -532,6 +565,144 @@ void f_800a86b4_fill_mem(uint *pp,int sz)
   }
   return;
 }
+
+
+
+
+
+void f_8009f890_mtx_shuff(MATRIX *m)
+{
+  short sVar1;
+  short sVar2;
+  short sVar3;
+  short sVar4;
+  short sVar5;
+  short sVar6;
+  short sVar7;
+  short sVar8;
+  
+  sVar1 = m->m[0];
+  sVar2 = m->m[3];
+  sVar3 = m->m[6];
+  sVar4 = m->m[4];
+  sVar5 = m->m[7];
+  sVar6 = m->m[2];
+  sVar7 = m->m[5];
+  sVar8 = m->m[8];
+  m->m[0] = m->m[1];
+  m->m[3] = sVar4;
+  m->m[6] = sVar5;
+  m->m[1] = -sVar6;
+  m->m[4] = -sVar7;
+  m->m[7] = -sVar8;
+  m->m[2] = -sVar1;
+  m->m[5] = -sVar2;
+  m->m[8] = -sVar3;
+  return;
+}
+
+
+
+void f_8009f798_mtx_shuff2(MATRIX *m)
+{
+  short sVar1;
+  short sVar2;
+  short sVar3;
+  short sVar4;
+  short sVar5;
+  short sVar6;
+  short sVar7;
+  short sVar8;
+  
+  sVar1 = m->m[0];
+  sVar2 = m->m[3];
+  sVar3 = m->m[6];
+  sVar4 = m->m[1];
+  sVar5 = m->m[4];
+  sVar6 = m->m[7];
+  sVar7 = m->m[5];
+  sVar8 = m->m[8];
+  m->m[0] = -m->m[2];
+  m->m[3] = -sVar7;
+  m->m[6] = -sVar8;
+  m->m[1] = sVar1;
+  m->m[4] = sVar2;
+  m->m[7] = sVar3;
+  m->m[2] = -sVar4;
+  m->m[5] = -sVar5;
+  m->m[8] = -sVar6;
+  return;
+}
+
+
+
+void f_8009f6a0_mtx_shuff3(MATRIX *m)
+{
+  short sVar1;
+  short sVar2;
+  short sVar3;
+  short sVar4;
+  short sVar5;
+  short sVar6;
+  short sVar7;
+  short sVar8;
+  
+  sVar1 = m->m[0];
+  sVar2 = m->m[3];
+  sVar3 = m->m[6];
+  sVar4 = m->m[4];
+  sVar5 = m->m[7];
+  sVar6 = m->m[2];
+  sVar7 = m->m[5];
+  sVar8 = m->m[8];
+  m->m[0] = -m->m[1];
+  m->m[3] = -sVar4;
+  m->m[6] = -sVar5;
+  m->m[1] = -sVar6;
+  m->m[4] = -sVar7;
+  m->m[7] = -sVar8;
+  m->m[2] = sVar1;
+  m->m[5] = sVar2;
+  m->m[8] = sVar3;
+  return;
+}
+
+
+
+
+void f_8009f5ac_mtx_shuff4(MATRIX *m)
+{
+  short sVar1;
+  short sVar2;
+  short sVar3;
+  short sVar4;
+  short sVar5;
+  short sVar6;
+  short sVar7;
+  short sVar8;
+  
+  sVar1 = m->m[0];
+  sVar2 = m->m[3];
+  sVar3 = m->m[6];
+  sVar4 = m->m[1];
+  sVar5 = m->m[4];
+  sVar6 = m->m[7];
+  sVar7 = m->m[5];
+  sVar8 = m->m[8];
+  m->m[0] = m->m[2];
+  m->m[3] = sVar7;
+  m->m[6] = sVar8;
+  m->m[1] = -sVar1;
+  m->m[4] = -sVar2;
+  m->m[7] = -sVar3;
+  m->m[2] = -sVar4;
+  m->m[5] = -sVar5;
+  m->m[8] = -sVar6;
+  return;
+}
+
+
+
 
 
 

@@ -19,6 +19,9 @@ typedef unsigned char uchar;
 typedef unsigned long ulong;
 typedef unsigned int uint; 
 
+typedef long long  longlong;
+typedef unsigned long long  ulonglong;
+
 #define FNC
 
 #define false (0)

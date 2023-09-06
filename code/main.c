@@ -4,7 +4,9 @@
 
 //------ funcs
 
-#define printf   	( (int(FNC*)(char*,...)) 0x800f6f10 )
+#define printf   	    ( (int(FNC*)(char*,...)) 0x800f6f10 )
+
+#define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
 
 
 
@@ -584,6 +586,155 @@ int f_800a45e0_vecs_mi(VECTOR *v0,VECTOR *v1)
 
 
 
+
+int f_80027d88_vec_xyz_sht(VECTOR *aa,VECTOR *bb,int *out)
+{
+  int i1;
+  int i2;
+  int i3;
+  int i4;
+  
+  i1 = aa->vx - bb->vx;
+  if (i1 < 0) {
+    i1 = bb->vx - aa->vx;
+  }
+  i4 = aa->vy - bb->vy;
+  if (i4 < 0) {
+    i4 = bb->vy - aa->vy;
+  }
+  i3 = aa->vz - bb->vz;
+  if (i3 < 0) {
+    i3 = bb->vz - aa->vz;
+  }
+  i2 = i1;
+  if (i1 < i4) {
+    i2 = i4;
+    i4 = i1;
+  }
+  i1 = i2;
+  if (i2 < i3) {
+    i1 = i3;
+    i3 = i2;
+  }
+  *out = i1 + (i4 + i3 >> 2);
+  return 0;
+}
+
+
+
+
+int f_80028750_vec_big_mults(VECTOR *v0,VECTOR *v1,VECTOR *dst)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  
+  iVar1 = f_80010654_longlong_mult(v0->vx,v1->vx);
+  iVar2 = f_80010654_longlong_mult(v0->vy,v1->vy);
+  iVar3 = f_80010654_longlong_mult(v0->vz,v1->vz);
+  iVar3 = iVar1 + iVar2 + iVar3;
+  iVar1 = f_80010654_longlong_mult(v1->vx,iVar3);
+  iVar2 = f_80010654_longlong_mult(v1->vy,iVar3);
+  iVar3 = f_80010654_longlong_mult(v1->vz,iVar3);
+  dst->vx = v0->vx - iVar1;
+  dst->vy = v0->vy - iVar2;
+  dst->vz = v0->vz - iVar3;
+  return 0;
+}
+
+
+
+
+int f_80027d00_vec_stuff_xz(VECTOR *v0,VECTOR *v1,int *out)
+
+{
+  int i1;
+  int i2;
+  int i3;
+  int i4;
+  
+  //printf("stuff xz %p %p\n", v0, v1);
+  
+  i4 = v0->vx - v1->vx;
+  if (i4 < 0) {
+    i4 = v1->vx - v0->vx;
+  }
+  i1 = v0->vz - v1->vz;
+  if (i1 < 0) {
+    i1 = v1->vz - v0->vz;
+  }
+  i2 = i4 + i1;
+  i3 = i4 - i1;
+  if (i3 < 0) {
+    i3 = i1 - i4;
+  }
+  if (i3 < i2 >> 1) {
+    i2 = i2 - (i2 >> 2);
+  }
+  else if (i3 <= (i2 >> 1) + (i2 >> 2)) {
+    i2 = i2 - (i2 >> 3);
+  }
+  *out = i2;
+  return 0;
+}
+
+
+
+
+
+int f_800230e4_vc_shift(VECTOR *aa,VECTOR *bb)
+{
+  bb->vx = aa->vx << 0xc;
+  bb->vy = aa->vy << 0xc;
+  bb->vz = aa->vz << 0xc;
+  return 0;
+}
+
+
+
+
+int f_80010654_longlong_mult(int aa,int bb)
+{
+  longlong lVar1;
+  uint uVar2;
+  uint uVar3;
+  
+  lVar1 = (longlong)aa * (longlong)bb;
+  uVar3 = (uint)((ulonglong)lVar1 >> 0x20);
+  if (-1 < lVar1) {
+    return uVar3 * 0x100000 + ((uint)lVar1 >> 0xc);
+  }
+  uVar2 = -(uint)lVar1;
+  uVar3 = ~uVar3;
+  if (uVar2 == 0) {
+    uVar3 = uVar3 + 1;
+  }
+  return -(uVar3 * 0x100000 + (uVar2 >> 0xc));
+}
+
+
+
+
+
+int f_80023a4c_vec_mag_xz(VECTOR *v0,int *v1)
+
+{
+  int i1;
+  int i2;
+  long i3;
+  
+  i1 = f_80010654_longlong_mult(v0->vx,v0->vx);
+  i2 = f_80010654_longlong_mult(v0->vz,v0->vz);
+  i3 = SquareRoot12(i1 + i2);
+  *v1 = i3;
+  return 0;
+}
+
+
+
+
+
 void f_800a86b4_fill_mem(uint *pp,int sz)
 {
   int i;
@@ -607,6 +758,22 @@ void f_800a86b4_fill_mem(uint *pp,int sz)
 }
 
 
+
+
+void f_800266a8_mem_set(void *adr,int val,int sz)
+{
+  uint wrd;
+  
+  wrd = val & 0xff;
+  if (3 < (uint)sz) {
+    do {
+      *(uint *)adr = wrd | wrd << 8 | wrd << 0x10 | wrd << 0x18;
+      sz = sz - 4;
+      adr = (void *)((int)adr + 4);
+    } while (3 < (uint)sz);
+  }
+  return;
+}
 
 
 

@@ -10,7 +10,12 @@
 
 //-------- data
 
+#define g_80122158_ptr_MMID EXTEXT(HeadMMID*,0x80122158)
+
 #define g_8012218c_current_MID_ptr EXTEXT(HeadMID*,0x8012218c)
+
+
+
 
 
 //-------------------------------
@@ -82,4 +87,50 @@ void f_80100998_midi_sets_ptrs(HeadMID *m)
   g_8012218c_current_MID_ptr = m;
   return;
 }
+
+
+
+
+byte * f_801008dc_midi_checks_sign(HeadMID *mid)
+{
+  uint u1;
+  byte *b1;
+  
+  b1 = mid->f_1c_rt_juice_cur;
+  if (b1 == (byte *)0x0) {
+    return (byte *)0x0;
+  }
+  if (*(int *)b1 != 0x2044494d) {
+    u1 = (uint)*(byte *)((int)&mid->f_18_juice_start + 1);
+    if ((int)(b1[7] - 1) < (int)u1) {
+      return (byte *)0x0;
+    }
+    b1 = *(byte **)(b1 + u1 * 4 + 0x10);
+  }
+  return b1;
+}
+
+
+
+
+
+void f_800ff6dc_snd_mmid_setups(HeadMMID *mmid)
+{
+  HeadMID *mid;
+  HeadMID *qqq;
+  
+  if (g_80122158_ptr_MMID != (HeadMMID *)0x0) {
+    mid = g_80122158_ptr_MMID->f_0c_ar_mid[0];
+    qqq = (HeadMID *)g_80122158_ptr_MMID;
+    while (mid != (HeadMID *)0x0) {
+      qqq = qqq->f_0c_next;
+      mid = qqq->f_0c_next;
+    }
+    qqq->f_0c_next = (HeadMID *)mmid;
+    return;
+  }
+  g_80122158_ptr_MMID = mmid;
+  return;
+}
+
 

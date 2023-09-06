@@ -54,8 +54,18 @@ typedef struct MATRIX {
 //--------------------------------
 
 
-typedef struct HeadMID HeadMID;
+typedef struct HeadMID  HeadMID;
+typedef struct HeadMMID HeadMMID;
 
+struct HeadMMID {
+    uint f_00_sign;
+    byte f_04_aa;
+    byte f_05_bb;
+    byte f_06_cc;
+    byte f_07_num_midi;
+    uint f_08_name;
+    HeadMID * f_0c_ar_mid[16];
+};
 
 
 struct HeadMID {

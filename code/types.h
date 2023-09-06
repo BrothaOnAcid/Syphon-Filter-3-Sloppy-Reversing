@@ -244,12 +244,13 @@ struct HeadMID {
 
 
 
+
+typedef void (*PFN_CHAN)(int, HeadMID*, int);
+
+
 struct SndChan {
     int f00_first;
-    undefined field1_0x4;
-    undefined field2_0x5;
-    undefined field3_0x6;
-    undefined field4_0x7;
+    int f_04_val1;
     int f_08_i2;
     short f_c_unk1;
     short f_e_unk2;
@@ -268,10 +269,7 @@ struct SndChan {
     undefined field23_0x25;
     undefined field24_0x26;
     undefined field25_0x27;
-    undefined field26_0x28;
-    undefined field27_0x29;
-    undefined field28_0x2a;
-    undefined field29_0x2b;
+    int f_28_mb_prio;
     undefined field30_0x2c;
     undefined field31_0x2d;
     undefined field32_0x2e;
@@ -290,7 +288,7 @@ struct SndChan {
     undefined field45_0x3e;
     undefined field46_0x3f;
     HeadMID * f_40_my_mid;
-    void (* f44_ptr_code)(int, HeadMID *, int);
+    PFN_CHAN f44_ptr_code;
 };
 
 

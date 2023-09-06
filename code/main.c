@@ -28,7 +28,7 @@
 
 #define g_8012218c_current_MID_ptr      EXTEXT(0x8012218c,HeadMID*)
 #define g_80122190_midi_u9              EXTEXT(0x80122190,int)
-
+#define g_801221b0_snd_rela99           EXTEXT(0x801221b0,int)
 
 typedef SndChan ARR_SND_CHANS[24];
 #define g_80145ac0_chans                EXTEXT(0x80145ac0,ARR_SND_CHANS)
@@ -1009,4 +1009,62 @@ void f_801001c4_snd_chan_he2(int chan_i)
 }
 
 
+
+
+int f_80107a94_snd_get_unk99(void)
+{
+  return g_801221b0_snd_rela99;
+}
+
+
+
+
+int f_800ffc3c_snd_chans_maybe_alloc(int maybePriority,HeadMID *mid,PFN_CHAN func1)
+{
+  SndChan *cha;
+  int q1;
+  int i1;
+  
+  q1 = 0;
+  cha = g_80145ac0_chans;
+  do {
+    if (cha->f00_first == 0) {
+      cha->f00_first = 2;
+      i1 = f_80107a94_snd_get_unk99();
+      cha->f_04_val1 = i1;
+      goto LAB_800ffd84;
+    }
+    q1 = q1 + 1;
+    cha = cha + 1;
+  } while (q1 < 0x18);
+  q1 = 0;
+  i1 = 1;
+  cha = g_80145ac0_chans;
+  do {
+    if ((cha[1].f_28_mb_prio < g_80145ac0_chans[q1].f_28_mb_prio) ||
+       ((cha[1].f_28_mb_prio == g_80145ac0_chans[q1].f_28_mb_prio &&
+        ((uint)cha[1].f_04_val1 < (uint)g_80145ac0_chans[q1].f_04_val1)))) {
+      q1 = i1;
+    }
+    i1 = i1 + 1;
+    cha = cha + 1;
+  } while (i1 < 0x18);
+  cha = g_80145ac0_chans + q1;
+  i1 = -1;
+  if ((g_80145ac0_chans[q1].f_28_mb_prio <= maybePriority) &&
+     (i1 = -1, g_80145ac0_chans[q1].f_28_mb_prio != 0x7f)) {
+    if (g_80145ac0_chans[q1].f44_ptr_code != 0x0) {
+      (*g_80145ac0_chans[q1].f44_ptr_code)(q1,g_80145ac0_chans[q1].f_40_my_mid,1);
+    }
+    cha->f00_first = 2;
+    i1 = f_80107a94_snd_get_unk99();
+    g_80145ac0_chans[q1].f_04_val1 = i1;
+LAB_800ffd84:
+    cha->f_28_mb_prio = maybePriority;
+    cha->f_40_my_mid = mid;
+    cha->f44_ptr_code = func1;
+    i1 = q1;
+  }
+  return i1;
+}
 

@@ -24,6 +24,11 @@
 
 
 
+void trap(ushort v)
+{
+    printf("TRAP ! %04X\n", v);
+}
+
 //-------------------------------
 
 uint f_80101244_midi_juice_stuff(byte *midiJuice,int *out)
@@ -503,6 +508,41 @@ int f_8009e8d0_vecs2_sht(VECTOR *v0,VECTOR *v1)
     q3 = q2;
   }
   return q1 + (q4 + q3 >> 2);
+}
+
+
+
+
+
+
+uint f_80010698_bits(uint aa,uint bb)
+{
+  uint u1;
+  uint u2;
+  
+  u2 = aa ^ bb;
+  if ((bb != 0) || (u1 = 0x7fffffff, false)) {
+    if ((int)aa < 0) {
+      aa = -aa;
+    }
+    if ((int)bb < 0) {
+      bb = -bb;
+    }
+    u1 = (aa << 0xc) / bb;
+    if (bb == 0) {
+      trap(0x1c00);
+    }
+    if (aa >> 0x14 != 0) {
+      if (bb == 0) {
+        trap(0x1c00);
+      }
+      u1 = u1 + (aa >> 0x14) * 2 * (0x80000000 / bb);
+    }
+  }
+  if ((int)u2 < 0) {
+    u1 = -u1;
+  }
+  return u1;
 }
 
 

@@ -21,6 +21,11 @@ typedef unsigned int uint;
 
 #define FNC
 
+#define false (0)
+#define true (1)
+
+
+
 //----------------------------------------
 
 
@@ -118,7 +123,9 @@ struct HeadSBNK {
     uint f_04_u;
     uint f_08_va;
     uint f_0c_nam;
-    uint f_10_i;
+    byte f_10_some_ind;
+    byte f_11_b2;
+    short f_12_sho;
     HeadSBNK * f_14_ptr_sb;
     short f_18_s;
     short f_1a_s2;

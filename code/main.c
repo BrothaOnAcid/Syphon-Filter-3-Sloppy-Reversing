@@ -142,7 +142,7 @@ HeadSBNK * f_800ff43c_snd_bank_by_name(byte *data)
 {
   HeadSBNK *sb;
   
-  printf("snd bank find.. for %p\n");
+  //printf("snd bank find.. for %p\n");
   
   sb = g_80122154_snd_banks;
   if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
@@ -166,7 +166,7 @@ int f_800ff4bc_midi_inits_rec(byte *da)
   byte *pbVar1;
   int i1;
   
-  printf("midi inits.. %p\n", da);
+  //printf("midi inits.. %p\n", da);
   
                     /* MID */
   if (*(int *)da == 0x2044494d) {
@@ -202,4 +202,145 @@ int f_800ff4bc_midi_inits_rec(byte *da)
 }
 
 
+
+
+
+HeadSBNK * f_800ff47c_snd_bank_find_unk(byte by)
+
+{
+  HeadSBNK *r;
+  
+  printf("snd bank fin by %d\n", by);
+  
+  r = g_80122154_snd_banks;
+  if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
+    do {
+      if (r->f_10_some_ind == by) {
+        return r;
+      }
+      r = r->f_14_ptr_sb;
+    } while (r != (HeadSBNK *)0x0);
+  }
+  return r;
+}
+
+
+
+HeadMMID * f_800ff6a4_snd_mmid_find(uint nam)
+{
+  HeadMMID *mid;
+  
+  //printf("MMID find.. %08X\n", nam);
+  
+  mid = g_80122158_ptr_MMID;
+  if (g_80122158_ptr_MMID != (HeadMMID *)0x0) {
+    do {
+      if (mid->f_08_name == nam) {
+        return mid;
+      }
+      mid = (HeadMMID *)mid->f_0c_ar_mid[0];
+    } while (mid != (HeadMMID *)0x0);
+  }
+  return mid;
+}
+
+
+
+
+void f_800ff184_snd_sb_big_sht(void)
+
+{
+  char cVar1;
+  bool bVar2;
+  int iVar3;
+  HeadMMID *mmid;
+  uint *puVar4;
+  int *q1;
+  HeadSBNK *sb1;
+  BankEnt *qq;
+  HeadSBNK *sb2;
+  int i1;
+  int i2;
+  
+  printf("big sht...\n");
+  
+  sb2 = g_80122154_snd_banks;
+  if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
+    do {
+      i2 = 0;
+      if (0 < sb2->f_18_s) {
+        i1 = 0;
+        do {
+          puVar4 = (uint *)((int)&sb2->f_20_ents->f_00_i + i1);
+          if ((puVar4[8] & 1) != 0) {
+            *puVar4 = (uint)*(byte *)(puVar4 + 3);
+            *(undefined4 *)((int)&sb2->f_20_ents->f_04_my + i1) =
+                 *(undefined4 *)((int)&sb2->f_20_ents->f_08_nam1 + i1);
+          }
+          sb1 = (HeadSBNK *)0x0;
+          q1 = (int *)((int)&sb2->f_20_ents->f_00_i + i1);
+          bVar2 = false;
+          if (*q1 - 7U < 2) {
+            sb1 = f_800ff43c_snd_bank_by_name((byte *)q1[1]);
+            bVar2 = true;
+          }
+          q1 = (int *)((int)&sb2->f_20_ents->f_00_i + i1);
+          if (*q1 - 9U < 5) {
+            sb1 = f_800ff47c_snd_bank_find_unk(*(byte *)(q1 + 1));
+            bVar2 = true;
+          }
+          if (sb1 == (HeadSBNK *)0x0) {
+            if (bVar2) {
+              *(undefined4 *)((int)&sb2->f_20_ents->f_04_my + i1) = 0;
+            }
+            else {
+              *(HeadSBNK **)((int)&sb2->f_20_ents->f_04_my + i1) = sb2;
+            }
+            qq = sb2->f_20_ents;
+            mmid = f_800ff6a4_snd_mmid_find(*(uint *)((int)&qq->f_0c_nam2 + i1));
+            *(HeadMMID **)((int)&qq->f_1c_ptr_mmid + i1) = mmid;
+          }
+          else {
+            q1 = (int *)((int)&sb2->f_20_ents->f_00_i + i1);
+            if (*q1 - 7U < 4) {
+              if ((int)(uint)*(byte *)((int)q1 + 0x19) < (int)sb1->f_18_s) {
+                qq = sb1->f_20_ents + *(byte *)((int)q1 + 0x19);
+                iVar3 = qq->f_00_i;
+                q1[1] = (int)sb1;
+                *q1 = iVar3;
+                *(undefined *)((int)q1 + 0xd) = *(undefined *)((int)&qq->f_0c_nam2 + 1);
+                cVar1 = *(char *)((int)&sb2->f_20_ents->f_0c_nam2 + i1);
+                if ((cVar1 == '\a') || (cVar1 == '\t')) {
+                  *(undefined *)((int)q1 + 0xe) = *(undefined *)((int)&qq->f_0c_nam2 + 2);
+                  *(undefined *)((int)q1 + 0xf) = *(undefined *)((int)&qq->f_0c_nam2 + 3);
+                  *(undefined *)(q1 + 4) = *(undefined *)&qq->f_10_i;
+                  *(undefined *)((int)q1 + 0x11) = *(undefined *)((int)&qq->f_10_i + 1);
+                  *(undefined *)((int)q1 + 0x12) = *(undefined *)&qq->f_12_i2;
+                  *(undefined *)((int)q1 + 0x13) = *(undefined *)((int)&qq->f_12_i2 + 1);
+                  *(undefined2 *)(q1 + 5) = *(undefined2 *)&qq->field6_0x14;
+                  *(undefined2 *)((int)q1 + 0x16) = *(undefined2 *)((int)&qq->field6_0x14 + 2);
+                  *(undefined *)(q1 + 6) = *(undefined *)&qq->field7_0x18;
+                }
+              }
+              else {
+                q1[1] = 0;
+              }
+            }
+            else {
+              *q1 = *q1 + -10;
+              *(HeadSBNK **)((int)&sb2->f_20_ents->f_04_my + i1) = sb1;
+            }
+            *(uint *)((int)&sb2->f_20_ents->f_20_dunno + i1) =
+                 *(uint *)((int)&sb2->f_20_ents->f_20_dunno + i1) | 1;
+          }
+          i2 = i2 + 1;
+          i1 = i1 + 0x24;
+        } while (i2 < sb2->f_18_s);
+      }
+      sb2->f_08_va = sb2->f_08_va | 2;
+      sb2 = sb2->f_14_ptr_sb;
+    } while (sb2 != (HeadSBNK *)0x0);
+  }
+  return;
+}
 

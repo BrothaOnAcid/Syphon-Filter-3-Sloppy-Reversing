@@ -467,3 +467,71 @@ void f_80100b20_midi_zero1(void)
 
 
 
+
+
+
+
+
+
+
+int f_800a45e0_vecs_mi(VECTOR *v0,VECTOR *v1)
+{
+  int i1;
+  int i2;
+  int i3;
+  int i4;
+  
+
+  i1 = v0->vx - v1->vx;
+  if (i1 < 0) {
+    i1 = v1->vx - v0->vx;
+  }
+  i4 = v0->vy - v1->vy;
+  if (i4 < 0) {
+    i4 = v1->vy - v0->vy;
+  }
+  i3 = v0->vz - v1->vz;
+  if (i3 < 0) {
+    i3 = v1->vz - v0->vz;
+  }
+  i2 = i1;
+  if (i1 < i4) {
+    i2 = i4;
+    i4 = i1;
+  }
+  i1 = i2;
+  if (i2 < i3) {
+    i1 = i3;
+    i3 = i2;
+  }
+  return i1 + (i4 + i3 >> 2);
+}
+
+
+
+void f_800a86b4_fill_mem(uint *pp,int sz)
+{
+  int i;
+  undefined *p;
+  
+  //printf("fill mem %p %d\n", pp, sz);
+  
+  i = sz + -1;
+  if (sz != 0) {
+    p = (undefined *)((int)pp + 6);
+    do {
+      p[9] = 8;
+      p[-2] = 0;
+      p[-1] = 0;
+      *p = 0;
+      p = p + 0x10;
+      *pp = 0;
+      i = i + -1;
+      pp = pp + 4;
+    } while (i != -1);
+  }
+  return;
+}
+
+
+

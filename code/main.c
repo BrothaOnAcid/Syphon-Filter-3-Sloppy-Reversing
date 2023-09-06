@@ -8,14 +8,13 @@
 
 #define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
 
+#define ApplyMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
+
+
+
 
 
 //-------- data
-
-
-
-
-
 
 #define g_80122130_midi_speed           EXTEXT(0x80122130,uint)
 
@@ -245,8 +244,6 @@ HeadSBNK * f_800ff47c_snd_bank_find_unk(byte by)
 {
   HeadSBNK *r;
   
-  printf("snd bank fin by %d\n", by);
-  
   r = g_80122154_snd_banks;
   if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
     do {
@@ -265,8 +262,7 @@ HeadMMID * f_800ff6a4_snd_mmid_find(uint nam)
 {
   HeadMMID *mid;
   
-  //printf("MMID find.. %08X\n", nam);
-  
+
   mid = g_80122158_ptr_MMID;
   if (g_80122158_ptr_MMID != (HeadMMID *)0x0) {
     do {
@@ -296,8 +292,6 @@ void f_800ff184_snd_sb_big_sht(void)
   HeadSBNK *sb2;
   int i1;
   int i2;
-  
-  printf("big sht...\n");
   
   sb2 = g_80122154_snd_banks;
   if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
@@ -935,15 +929,6 @@ void f_8009f5ac_mtx_shuff4(MATRIX *m)
 
 
 
-
-SndChan* __GetChans()
-{
-    SndChan* r = (SndChan*)(0x80145ac0);
-    return r;
-}
-
-
-
 void f_80100254_snd_chan_un1(int chInd)
 {
   uint u1;
@@ -1149,8 +1134,6 @@ int f_800fca90_sbank_rn(HeadSBNK *sb,int ind,int a3,BankProps **arr)
   uint uVar1;
   int ii;
   
-  printf("bnk %p  %d  %d  %08X\n", sb, ind, a3, arr);
-  
   ii = 0;
   if (sb->f_1a_s2 <= ind) {
     return 0;
@@ -1170,6 +1153,30 @@ int f_800fca90_sbank_rn(HeadSBNK *sb,int ind,int a3,BankProps **arr)
     } while (qq < (int)uVar1);
   }
   return ii;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int f_80029054_mtx_lv(VECTOR *v0,MATRIX *mtx,VECTOR *dst)
+{
+    printf("mtx lv.. %p\n", v0);
+    
+  ApplyMatrixLV(mtx,v0,dst);
+  dst->vx = dst->vx + mtx->t[0];
+  dst->vy = dst->vy + mtx->t[1];
+  dst->vz = dst->vz + mtx->t[2];
+  return 0;
 }
 
 

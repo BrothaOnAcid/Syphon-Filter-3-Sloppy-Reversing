@@ -10,9 +10,11 @@
 
 //-------- data
 
-#define g_80122158_ptr_MMID EXTEXT(HeadMMID*,0x80122158)
+#define g_80122154_snd_banks            EXTEXT(HeadSBNK*,0x80122154)
 
-#define g_8012218c_current_MID_ptr EXTEXT(HeadMID*,0x8012218c)
+#define g_80122158_ptr_MMID             EXTEXT(HeadMMID*,0x80122158)
+
+#define g_8012218c_current_MID_ptr      EXTEXT(HeadMID*,0x8012218c)
 
 
 
@@ -132,5 +134,72 @@ void f_800ff6dc_snd_mmid_setups(HeadMMID *mmid)
   g_80122158_ptr_MMID = mmid;
   return;
 }
+
+
+
+
+HeadSBNK * f_800ff43c_snd_bank_by_name(byte *data)
+{
+  HeadSBNK *sb;
+  
+  printf("snd bank find.. for %p\n");
+  
+  sb = g_80122154_snd_banks;
+  if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
+    do {
+      if ((byte *)sb->f_0c_nam == data) {
+        return sb;
+      }
+      sb = sb->f_14_ptr_sb;
+    } while (sb != (HeadSBNK *)0x0);
+  }
+  return sb;
+}
+
+
+
+
+int f_800ff4bc_midi_inits_rec(byte *da)
+{
+  HeadSBNK *b1;
+  byte *b2;
+  byte *pbVar1;
+  int i1;
+  
+  printf("midi inits.. %p\n", da);
+  
+                    /* MID */
+  if (*(int *)da == 0x2044494d) {
+    b1 = f_800ff43c_snd_bank_by_name(*(byte **)(da + 0x10));
+    i1 = *(int *)(da + 0x18);
+    *(HeadSBNK **)(da + 0x14) = b1;
+    *(undefined4 *)(da + 0xc) = 0;
+    *(undefined4 *)(da + 0x20) = 0;
+    *(byte **)(da + 0x18) = da + i1;
+    *(byte **)(da + 0x1c) = da + i1;
+    f_800ff6dc_snd_mmid_setups((HeadMMID *)da);
+  }
+  else {
+                    /* MMID */
+    if (*(int *)da == 0x44494d4d) {
+      *(undefined4 *)(da + 0xc) = 0;
+      f_800ff6dc_snd_mmid_setups((HeadMMID *)da);
+      i1 = 0;
+      pbVar1 = da;
+      if (da[7] != 0) {
+        do {
+          i1 = i1 + 1;
+          b2 = da + *(int *)(pbVar1 + 0x10);
+          *(byte **)(pbVar1 + 0x10) = b2;
+          f_800ff4bc_midi_inits_rec(b2);
+          *(byte **)(b2 + 0x20) = da;
+          pbVar1 = pbVar1 + 4;
+        } while (i1 < (int)(uint)da[7]);
+      }
+    }
+  }
+  return 0;
+}
+
 
 

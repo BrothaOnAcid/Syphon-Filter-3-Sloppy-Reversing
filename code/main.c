@@ -10,13 +10,17 @@
 
 //-------- data
 
+
+
+#define g_80122138_music_danger_timer   EXTEXT(int,0x80122138)
+
 #define g_80122154_snd_banks            EXTEXT(HeadSBNK*,0x80122154)
 
 #define g_80122158_ptr_MMID             EXTEXT(HeadMMID*,0x80122158)
 
 #define g_8012218c_current_MID_ptr      EXTEXT(HeadMID*,0x8012218c)
 
-
+#define g_80122190_midi_u9              EXTEXT(int,0x80122190)
 
 
 
@@ -343,4 +347,123 @@ void f_800ff184_snd_sb_big_sht(void)
   }
   return;
 }
+
+
+
+
+
+void f_800fe844_music_danger_set(int val)
+
+{
+  if (0x7f < val) {
+    val = 0x7f;
+  }
+  if (val < 0) {
+    val = 0;
+  }
+  g_80122138_music_danger_timer = val;
+  return;
+}
+
+
+
+int f_800fe86c_music_danger_get(void)
+
+{
+  return g_80122138_music_danger_timer;
+}
+
+
+
+
+
+
+
+int f_801007e0_snd_mid4(HeadMID *mid,int aa,int bb)
+
+{
+  HeadMID *mm;
+  int iVar1;
+  byte *b2;
+  short s1;
+  
+
+  mm = (HeadMID *)f_801008dc_midi_checks_sign(mid);
+  iVar1 = -1;
+  if ((mm != (HeadMID *)0x0) && (iVar1 = -1, mm->f_14_ptr_sbnk != (HeadSBNK *)0x0)) {
+    if (aa == -1) {
+      *(undefined *)((int)&mid->f_10_name + 2) = *(undefined *)((int)&mid->f_10_name + 3);
+    }
+    else if (aa != -2) {
+      *(char *)((int)&mid->f_10_name + 2) = (char)aa;
+    }
+    if (bb == -1) {
+      *(undefined2 *)&mid->f_14_ptr_sbnk = *(undefined2 *)((int)&mid->f_14_ptr_sbnk + 2);
+    }
+    else if (bb != -2) {
+      *(short *)&mid->f_14_ptr_sbnk = (short)bb;
+    }
+    b2 = mm->f_18_juice_start;
+    *(undefined *)&mm->f_3c_unk3 = *(undefined *)((int)&mid->f_10_name + 2);
+    mm->f_3e_yyy = *(short *)&mid->f_14_ptr_sbnk;
+    *(undefined *)((int)&mm->f_3c_unk3 + 1) = *(undefined *)&mid->f_18_juice_start;
+    s1 = *(short *)&mid->f_10_name;
+    mm->f_28_unk1 = 0;
+    mm->f_24_dunno1 = 0;
+    mm->f_1c_rt_juice_cur = b2;
+    mm->f_06_s2 = mm->f_06_s2 | 5;
+    mm->f_3a_ww = s1;
+    f_80101838_midi_help1(mm);
+    f_80100998_midi_sets_ptrs(mm);
+    iVar1 = 1;
+  }
+  return iVar1;
+}
+
+
+
+
+
+int f_800fdb08_bank_unk3(HeadSBNK *sb,int ind,int val)
+
+{
+  BankEnt *e;
+  
+  printf("bank unk %08X %d %d\n", sb, ind, val);
+  
+  if (((sb != (HeadSBNK *)0x0) && (ind < sb->f_18_s)) && (-1 < ind)) {
+    e = sb->f_20_ents + ind;
+    if (1 < e->f_00_i - 4U) {
+      if (e->f_00_i == 0xe) {
+        e = sb->f_20_ents + ind + 1;
+        val = -1;
+      }
+      if (val != -1) {
+        return (uint)*(byte *)((int)&e->f_0c_nam2 + 2);
+      }
+      return (uint)*(byte *)((int)&e->f_0c_nam2 + 3);
+    }
+  }
+  return -1;
+}
+
+
+
+
+void f_80100b10_midi_unk_set_one(void)
+{
+  g_80122190_midi_u9 = 1;
+  return;
+}
+
+
+
+void f_80100b20_midi_zero1(void)
+{
+  g_80122190_midi_u9 = 0;
+  return;
+}
+
+
+
 

@@ -236,7 +236,7 @@ struct HeadMID {
     short f_64_arr_a[16];
     short f_84_arr_b[16];
     HeadMID * f_a4_ptr_ano_mid;
-    byte * f_a8_ptr;
+    HeadMID * f_a8_ptr_ano_mid2;
 };
 
 

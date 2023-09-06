@@ -70,6 +70,12 @@ typedef struct BankTab      BankTab;
 typedef struct BankEnt      BankEnt;
 typedef struct SndChan      SndChan;
 
+typedef struct DonkSub1     DonkSub1;
+typedef struct DonkSub2C    DonkSub2C;
+
+typedef struct WpnTabS10    WpnTabS10;
+
+
 struct BankProps {
     undefined field0_0x0;
     undefined field1_0x1;
@@ -291,4 +297,67 @@ struct SndChan {
     PFN_CHAN f44_ptr_code;
 };
 
+
+
+
+
+// wpn related
+struct DonkSub1 {
+    short f_00_sho1;
+    short f_02_sho2;
+    int f_04_i;
+    int f_08_i2;
+};
+
+
+
+// wpn related
+struct DonkSub2C {
+    int f_00_i;
+    short f_04_s1;
+    short f_06_s2;
+    short f_08_s3_mb_arr;
+    short f_0a_aaa;
+    short f_0c_bbb;
+    byte f_e_by1;
+    byte f_f_by2;
+    short f_10_s1;
+    short f_12_s2;
+    undefined field10_0x14;
+    undefined field11_0x15;
+    undefined field12_0x16;
+    undefined field13_0x17;
+    ushort f_18_x1;
+    ushort f_1a_x2;
+    undefined field16_0x1c;
+    undefined field17_0x1d;
+    undefined field18_0x1e;
+    undefined field19_0x1f;
+    undefined field20_0x20;
+    undefined field21_0x21;
+    undefined field22_0x22;
+    undefined field23_0x23;
+    undefined field24_0x24;
+    undefined field25_0x25;
+    undefined field26_0x26;
+    undefined field27_0x27;
+    undefined field28_0x28;
+    undefined field29_0x29;
+    undefined field30_0x2a;
+    undefined field31_0x2b;
+};
+
+
+
+// icons ?
+struct WpnTabS10 {
+    int f_0_u;
+    short f_2_shsh;
+    byte f_6_qq;
+    byte f_7_ub;
+    short f_8_x1;
+    ushort f_a_x2;
+    ushort f_c_sh2;
+    short f_e_sh3;
+};
 

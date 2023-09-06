@@ -16,6 +16,13 @@
 
 //-------- data
 
+
+typedef int ARR_TMP1[4];
+#define g_8011fcb0_ar_vol_sht           EXTEXT(0x8011fcb0,ARR_TMP1)
+
+
+
+
 #define g_80122130_midi_speed           EXTEXT(0x80122130,uint)
 
 #define g_80122138_music_danger_timer   EXTEXT(0x80122138,int)
@@ -36,6 +43,9 @@
 
 
 
+typedef WpnTabS10 ARR_WPNTAB1[83];
+#define g_80132084_wpn_icons_tab        EXTEXT(0x80132084,ARR_WPNTAB1)
+
 
 typedef SndChan ARR_SND_CHANS[24];
 #define g_80145ac0_chans                EXTEXT(0x80145ac0,ARR_SND_CHANS)
@@ -45,9 +55,9 @@ typedef SndChan ARR_SND_CHANS[24];
 
 
 
-typedef int ARR_TMP1[4];
-#define g_8011fcb0_ar_vol_sht                EXTEXT(0x8011fcb0,ARR_TMP1)
 
+
+//----------------------------------
 
 void trap(ushort v)
 {
@@ -1092,7 +1102,6 @@ int f_800fecf8_vol_calc(short vv,int a2)
 
 void f_801000a0_snd_chan_prio_destr(int chanInd)
 {
-
   if (g_80145ac0_chans[chanInd].f_28_mb_prio != 0x7f) {
     g_80145ac0_chans[chanInd].f00_first = 0;
   }
@@ -1159,24 +1168,101 @@ int f_800fca90_sbank_rn(HeadSBNK *sb,int ind,int a3,BankProps **arr)
 
 
 
-
-
-
-
-
-
-
-
-
 int f_80029054_mtx_lv(VECTOR *v0,MATRIX *mtx,VECTOR *dst)
 {
-    printf("mtx lv.. %p\n", v0);
-    
   ApplyMatrixLV(mtx,v0,dst);
   dst->vx = dst->vx + mtx->t[0];
   dst->vy = dst->vy + mtx->t[1];
   dst->vz = dst->vz + mtx->t[2];
   return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// called at wpn switch
+void f_80057f84_wpn_sub_unk(DonkSub1 *st)
+{
+  int i8;
+  int i1;
+  int i2;
+  int i5;
+  int i9;
+  short *qq;
+  short *ss;
+  
+  i8 = st->f_04_i;
+  if (0 < i8) {
+    i9 = 0;
+    i5 = 0;
+    i1 = 0;
+    if (0 < i8) {
+      i2 = st->f_08_i2;
+      do {
+        ss = (short *)(i2 + 4);
+        qq = (short *)(i2 + 6);
+        i2 = i2 + 0x2c;
+        i5 = i5 + 1;
+        i9 = i9 + *ss;
+        i1 = i1 + *qq;
+      } while (i5 < i8);
+    }
+    i8 = st->f_04_i;
+    if (i8 == 0) {
+      trap(0x1c00);
+    }
+    if ((i8 == -1) && (i9 == -0x80000000)) {
+      trap(0x1800);
+    }
+    i5 = st->f_04_i;
+    if (i5 == 0) {
+      trap(0x1c00);
+    }
+    if ((i5 == -1) && (i1 == -0x80000000)) {
+      trap(0x1800);
+    }
+    st->f_00_sho1 = (short)(i9 / i8);
+    st->f_02_sho2 = (short)(i1 / i5);
+    
+  }
+  return;
+}
+
+
+
+
+// called at weapon switch
+DonkSub2C * f_800580e4_wpn_rel_fills_str(uint ii,DonkSub2C *pt)
+{
+  if ((pt == (DonkSub2C *)0x0) || (0x52 < ii)) {
+    pt = (DonkSub2C *)0x0;
+  }
+  else {
+    pt->f_00_i = g_80132084_wpn_icons_tab[ii].f_0_u;
+    pt->f_0c_bbb = g_80132084_wpn_icons_tab[ii].f_2_shsh;
+    pt->f_e_by1 = g_80132084_wpn_icons_tab[ii].f_6_qq;
+    pt->f_f_by2 = g_80132084_wpn_icons_tab[ii].f_7_ub;
+    pt->f_08_s3_mb_arr = g_80132084_wpn_icons_tab[ii].f_8_x1;
+    pt->f_0a_aaa = g_80132084_wpn_icons_tab[ii].f_a_x2;
+    pt->f_10_s1 = g_80132084_wpn_icons_tab[ii].f_c_sh2;
+    pt->f_12_s2 = g_80132084_wpn_icons_tab[ii].f_e_sh3;
+    pt->f_18_x1 = (ushort)g_80132084_wpn_icons_tab[ii].f_8_x1 >> 1;
+    pt->f_1a_x2 = g_80132084_wpn_icons_tab[ii].f_a_x2 >> 1;
+  }
+  return pt;
 }
 
 

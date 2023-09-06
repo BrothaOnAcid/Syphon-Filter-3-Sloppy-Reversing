@@ -62,13 +62,13 @@ typedef struct MATRIX {
 //--------------------------------
 
 
-typedef struct HeadMID  HeadMID;
-typedef struct HeadMMID HeadMMID;
-
+typedef struct HeadMID      HeadMID;
+typedef struct HeadMMID     HeadMMID;
+typedef struct HeadSBNK     HeadSBNK;
 typedef struct BankProps    BankProps;
 typedef struct BankTab      BankTab;
 typedef struct BankEnt      BankEnt;
-typedef struct HeadSBNK     HeadSBNK;
+typedef struct SndChan      SndChan;
 
 struct BankProps {
     undefined field0_0x0;
@@ -242,5 +242,55 @@ struct HeadMID {
     HeadMID * f_a8_ptr_ano_mid2;
 };
 
+
+
+struct SndChan {
+    int f00_first;
+    undefined field1_0x4;
+    undefined field2_0x5;
+    undefined field3_0x6;
+    undefined field4_0x7;
+    int f_08_i2;
+    short f_c_unk1;
+    short f_e_unk2;
+    short f_10_mini;
+    short f_12_va;
+    int f_14_i;
+    ushort f18_note;
+    undefined field15_0x1a;
+    undefined field16_0x1b;
+    undefined field17_0x1c;
+    undefined field18_0x1d;
+    undefined field19_0x1e;
+    undefined field20_0x1f;
+    int f_20_fla;
+    undefined field22_0x24;
+    undefined field23_0x25;
+    undefined field24_0x26;
+    undefined field25_0x27;
+    undefined field26_0x28;
+    undefined field27_0x29;
+    undefined field28_0x2a;
+    undefined field29_0x2b;
+    undefined field30_0x2c;
+    undefined field31_0x2d;
+    undefined field32_0x2e;
+    undefined field33_0x2f;
+    int f30_inte;
+    undefined field35_0x34;
+    undefined field36_0x35;
+    undefined field37_0x36;
+    undefined field38_0x37;
+    undefined field39_0x38;
+    undefined field40_0x39;
+    undefined field41_0x3a;
+    undefined field42_0x3b;
+    undefined field43_0x3c;
+    undefined field44_0x3d;
+    undefined field45_0x3e;
+    undefined field46_0x3f;
+    HeadMID * f_40_my_mid;
+    void (* f44_ptr_code)(int, HeadMID *, int);
+};
 
 

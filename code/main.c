@@ -1,6 +1,6 @@
 #include "types.h"
 
-#define EXTEXT(ty,adr) (*(ty*)(adr))  
+#define EXTEXT(adr,ty) (*(ty*)(adr))  
 
 //------ funcs
 
@@ -14,16 +14,24 @@
 
 
 
-#define g_80122138_music_danger_timer   EXTEXT(int,0x80122138)
 
-#define g_80122154_snd_banks            EXTEXT(HeadSBNK*,0x80122154)
 
-#define g_80122158_ptr_MMID             EXTEXT(HeadMMID*,0x80122158)
 
-#define g_8012218c_current_MID_ptr      EXTEXT(HeadMID*,0x8012218c)
 
-#define g_80122190_midi_u9              EXTEXT(int,0x80122190)
+#define g_80122138_music_danger_timer   EXTEXT(0x80122138,int)
 
+#define g_80122154_snd_banks            EXTEXT(0x80122154,HeadSBNK*)
+#define g_80122158_ptr_MMID             EXTEXT(0x80122158,HeadMMID*)
+
+#define g_80122178_snd_some_mask        EXTEXT(0x80122178,uint)
+#define g_8012217c_snd_mask2            EXTEXT(0x8012217c,uint)
+
+#define g_8012218c_current_MID_ptr      EXTEXT(0x8012218c,HeadMID*)
+#define g_80122190_midi_u9              EXTEXT(0x80122190,int)
+
+
+typedef SndChan ARR_SND_CHANS[24];
+#define g_80145ac0_chans                EXTEXT(0x80145ac0,ARR_SND_CHANS)
 
 
 void trap(ushort v)
@@ -910,6 +918,95 @@ void f_8009f5ac_mtx_shuff4(MATRIX *m)
 
 
 
+
+
+SndChan* __GetChans()
+{
+    SndChan* r = (SndChan*)(0x80145ac0);
+    return r;
+}
+
+
+
+void f_80100254_snd_chan_un1(int chInd)
+{
+  uint u1;
+  SndChan *sc;
+  uint q;
+  
+  q = 0;
+  sc = g_80145ac0_chans;
+  do {
+    u1 = 1 << (q & 0x1f);
+    if (((chInd & u1) != 0) && (sc->f00_first == 1)) {
+      if (sc->f44_ptr_code != 0x0) {
+        (*sc->f44_ptr_code)(q,sc->f_40_my_mid,3);
+      }
+      if ((g_80122178_snd_some_mask & u1) != 0) {
+        g_80122178_snd_some_mask = g_80122178_snd_some_mask & ~u1;
+      }
+    }
+    q = q + 1;
+    sc = sc + 1;
+  } while ((int)q < 0x18);
+  g_8012217c_snd_mask2 = g_8012217c_snd_mask2 | chInd;
+  return;
+}
+
+
+
+SndChan * f_80100318_snd_chan_by_index(int ind)
+{
+  return g_80145ac0_chans + ind;
+}
+
+
+
+// every frame
+void f_80100120_snd_chans_iter_un(void)
+{
+  int i;
+  SndChan *cha;
+  uint u1;
+  uint u2;
+  
+
+  u2 = 0;
+  u1 = 0;
+  cha = g_80145ac0_chans;
+  do {
+    if (((cha->f00_first == 1) && (i = cha->f_08_i2 + -1, cha->f_08_i2 != 0)) &&
+       (cha->f_08_i2 = i, i == 0)) {
+      u2 = u2 | 1 << (u1 & 0x1f);
+      if (cha->f44_ptr_code != 0x0) {
+          printf(" at iter... exec cb !\n");
+        (*cha->f44_ptr_code)(u1,cha->f_40_my_mid,3);
+      }
+    }
+    u1 = u1 + 1;
+    cha = cha + 1;
+  } while ((int)u1 < 0x18);
+  g_8012217c_snd_mask2 = g_8012217c_snd_mask2 | u2;
+  return;
+}
+
+
+// snd kill ?
+void f_801001c4_snd_chan_he2(int chan_i)
+{
+  uint uu;
+  
+  if ((g_80145ac0_chans[chan_i].f00_first == 1) &&
+     (g_80145ac0_chans[chan_i].f44_ptr_code != 0x0)) {
+    (*g_80145ac0_chans[chan_i].f44_ptr_code)(chan_i,g_80145ac0_chans[chan_i].f_40_my_mid,3);
+  }
+  uu = 1 << (chan_i & 0x1fU);
+  if ((g_80122178_snd_some_mask & uu) != 0) {
+    g_80122178_snd_some_mask = g_80122178_snd_some_mask & ~uu;
+  }
+  g_8012217c_snd_mask2 = g_8012217c_snd_mask2 | uu;
+  return;
+}
 
 
 

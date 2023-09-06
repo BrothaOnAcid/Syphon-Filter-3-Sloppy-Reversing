@@ -3,6 +3,8 @@
 
 #include <sys/types.h>
 
+typedef int bool;
+
 typedef unsigned char u8;
 
 typedef unsigned char   undefined;

@@ -17,21 +17,37 @@
 
 
 
+#define g_80122130_midi_speed           EXTEXT(0x80122130,uint)
 
 #define g_80122138_music_danger_timer   EXTEXT(0x80122138,int)
 
 #define g_80122154_snd_banks            EXTEXT(0x80122154,HeadSBNK*)
 #define g_80122158_ptr_MMID             EXTEXT(0x80122158,HeadMMID*)
 
+#define g_80122168_voice_env_req        EXTEXT(0x80122168,int)
+
 #define g_80122178_snd_some_mask        EXTEXT(0x80122178,uint)
 #define g_8012217c_snd_mask2            EXTEXT(0x8012217c,uint)
+
+#define g_80122184_snd_msk3             EXTEXT(0x80122184,uint)
 
 #define g_8012218c_current_MID_ptr      EXTEXT(0x8012218c,HeadMID*)
 #define g_80122190_midi_u9              EXTEXT(0x80122190,int)
 #define g_801221b0_snd_rela99           EXTEXT(0x801221b0,int)
 
+
+
+
 typedef SndChan ARR_SND_CHANS[24];
 #define g_80145ac0_chans                EXTEXT(0x80145ac0,ARR_SND_CHANS)
+
+
+
+
+
+
+typedef int ARR_TMP1[4];
+#define g_8011fcb0_ar_vol_sht                EXTEXT(0x8011fcb0,ARR_TMP1)
 
 
 void trap(ushort v)
@@ -1067,4 +1083,95 @@ LAB_800ffd84:
   }
   return i1;
 }
+
+
+
+
+int f_800fecf8_vol_calc(short vv,int a2)
+{
+  short s2;
+  int i1;
+  
+  i1 = ((int)vv * g_8011fcb0_ar_vol_sht[a2]) / 0x7f;
+  s2 = 1;
+  if (i1 < 0) {
+    s2 = -1;
+  }
+  return (int)(short)((short)((i1 * i1) / 0x3fff) * s2);
+}
+
+
+
+
+
+
+void f_801000a0_snd_chan_prio_destr(int chanInd)
+{
+
+  if (g_80145ac0_chans[chanInd].f_28_mb_prio != 0x7f) {
+    g_80145ac0_chans[chanInd].f00_first = 0;
+  }
+  if (g_80145ac0_chans[chanInd].f44_ptr_code != 0x0) {
+    (*g_80145ac0_chans[chanInd].f44_ptr_code)(chanInd,g_80145ac0_chans[chanInd].f_40_my_mid,2);
+  }
+  g_80122184_snd_msk3 = g_80122184_snd_msk3 & ~(1 << (chanInd & 0x1fU));
+  return;
+}
+
+
+
+
+
+int f_800fee3c_snd_he3(uint uu)
+{
+  int i1;
+  uint u2;
+  
+  u2 = uu & 0xff;
+  if (u2 < 0x40) {
+    i1 = u2 * 0x5a;
+    if (false) {
+      i1 = i1 + 0x3f;
+    }
+    return (i1 >> 6) + 0x10e;
+  }
+  return ((int)((u2 - 0x40) * 0x5a) / 0x3f) * 0x10000 >> 0x10;
+}
+
+
+
+
+
+int f_800fca90_sbank_rn(HeadSBNK *sb,int ind,int a3,BankProps **arr)
+{
+  BankProps *pr;
+  int qq;
+  uint uVar1;
+  int ii;
+  
+  printf("bnk %p  %d  %d  %08X\n", sb, ind, a3, arr);
+  
+  ii = 0;
+  if (sb->f_1a_s2 <= ind) {
+    return 0;
+  }
+  uVar1 = (uint)sb->f_24_tabs[ind].smp_ind;
+  pr = sb->f_24_tabs[ind].p_juice;
+  qq = 0;
+  if (uVar1 != 0) {
+    do {
+      if (((int)(uint)pr->f_06_rng1 <= a3) && (a3 <= (int)(uint)pr->f_07_rng2)) {
+        *arr = pr;
+        arr = arr + 1;
+        ii = ii + 1;
+      }
+      qq = qq + 1;
+      pr = pr + 1;
+    } while (qq < (int)uVar1);
+  }
+  return ii;
+}
+
+
+
 

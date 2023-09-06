@@ -77,8 +77,8 @@ struct BankProps {
     undefined field3_0x3;
     undefined field4_0x4;
     undefined field5_0x5;
-    undefined field6_0x6;
-    undefined field7_0x7;
+    byte f_06_rng1;
+    byte f_07_rng2;
     undefined field8_0x8;
     undefined field9_0x9;
     undefined field10_0xa;

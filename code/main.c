@@ -20,7 +20,12 @@
 
 #define GsGetTimInfo   	( (void(FNC*)(ulong*,GsIMAGE*)) 0x800f9cd8 )
 
+#define strcmp   	    ( (int(FNC*)(char*,char*)) 0x800fb018 )
+
 //-------- data
+
+
+
 
 
 
@@ -1506,6 +1511,151 @@ int f_80025eac_get_tim_info(ImgDerp *rrr)
 
 
 
+
+int f_800277ac_str_tab_search(StrTabHead *tt,char *nam,int *ret)
+{
+  int i1;
+  byte *p;
+  int i2;
+  int i3;
+  byte b;
+  
+  //printf("str tab search.. %p %s\n", tt, nam);
+
+  
+  if ((((tt == (StrTabHead *)0x0) || (tt->ptr_dun == (byte *)0x0)) || (nam == (char *)0x0)) ||
+     (i2 = 0, ret == (int *)0x0)) {
+    i2 = 1;
+  }
+  else {
+    i3 = 0;
+    if (0 < *(int *)(tt->ptr_dun + 4)) {
+      do {
+        i1 = strcmp(nam,(char *)(tt->ptr_dun + i2 + *(int *)(tt->ptr_dun + 0xc)));
+        if (i1 == 0) break;
+        p = tt->ptr_dun;
+        i1 = i2 + *(int *)(p + 0xc);
+        i2 = i2 + 1;
+        if (p[i1] != 0) {
+          p = p + i2 + *(int *)(p + 0xc);
+          do {
+            b = *p;
+            p = p + 1;
+            i2 = i2 + 1;
+          } while (b != 0);
+        }
+        i3 = i3 + 1;
+      } while (i3 < *(int *)(tt->ptr_dun + 4));
+      p = tt->ptr_dun;
+      if (i3 < *(int *)(p + 4)) {
+        *ret = (int)(p + *(int *)(p + i3 * 4 + *(int *)(p + 8)) + *(int *)(p + 0x10));
+        return 0;
+      }
+    }
+    i2 = 5;
+  }
+  return i2;
+}
+
+
+
+
+
+int f_800276b0_str_tab_get_count(StrTabHead *unun)
+{
+  int ii;
+  
+  ii = 1;
+  if ((unun != (StrTabHead *)0x0) && (unun->ptr_dun != (byte *)0x0)) {
+    ii = *(int *)(unun->ptr_dun + 4);
+  }
+  return ii;
+}
+
+
+
+
+int f_80027744_str_tab_he1(StrTabHead *unun,int ii,int *out)
+{
+  int i;
+  byte *b;
+  
+  i = 1;
+  if (((unun != (StrTabHead *)0x0) && (b = unun->ptr_dun, b != (byte *)0x0)) && (i = 0xe, -1 < ii))
+  {
+    if (ii < *(int *)(b + 4)) {
+      i = 0;
+      *out = *(int *)((int)(b + ii * 4 + *(int *)(b + 8)) + 4) -
+             *(int *)(b + ii * 4 + *(int *)(b + 8));
+    }
+    else {
+      i = 0xe;
+    }
+  }
+  return i;
+}
+
+
+
+
+int f_800278f8_str_fn(StrTabHead *unun,char *fn)
+{
+  int i2;
+  int rr;
+  byte *pp;
+  int ii;
+  byte b1;
+  
+  pp = unun->ptr_dun;
+  rr = 0;
+  ii = 0;
+  if (0 < *(int *)(pp + 4)) {
+    do {
+      i2 = strcmp(fn,(char *)(pp + rr + *(int *)(pp + 0xc)));
+      if (i2 == 0) break;
+      pp = unun->ptr_dun;
+      i2 = rr + *(int *)(pp + 0xc);
+      rr = rr + 1;
+      if (pp[i2] != 0) {
+        pp = pp + rr + *(int *)(pp + 0xc);
+        do {
+          b1 = *pp;
+          pp = pp + 1;
+          rr = rr + 1;
+        } while (b1 != 0);
+      }
+      pp = unun->ptr_dun;
+      ii = ii + 1;
+    } while (ii < *(int *)(pp + 4));
+  }
+  rr = -1;
+  if (ii < *(int *)(unun->ptr_dun + 4)) {
+    rr = ii;
+  }
+  return rr;
+}
+
+
+
+int f_800276d4_str_tab_get_p(StrTabHead *unun,int ind,byte *im)
+{
+  int i;
+  byte *b;
+  
+
+  i = 1;
+  if ((((unun != (StrTabHead *)0x0) && (b = unun->ptr_dun, b != (byte *)0x0)) && (im != (byte *)0x0)
+      ) && (i = 0xe, -1 < ind)) {
+    i = 0;
+    if (ind < *(int *)(b + 4)) {
+      *(byte **)im = b + *(int *)(b + ind * 4 + *(int *)(b + 8)) + *(int *)(b + 0x10);
+    }
+    else {
+      i = 0xe;
+    }
+  }
+  return i;
+}
 
 
 

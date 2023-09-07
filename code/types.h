@@ -106,6 +106,9 @@ typedef struct PlaStAtF4    PlaStAtF4;
 typedef struct ImgDerp      ImgDerp;
 
 
+typedef struct StrTabHead   StrTabHead;
+
+
 struct BankProps {
     undefined field0_0x0;
     undefined field1_0x1;
@@ -938,5 +941,14 @@ struct ImgDerp {
     undefined field8_0xb;
     GsIMAGE f_0c_gs_img;
     int f_28_dunno;
+};
+
+
+
+struct StrTabHead {
+    byte * ptr_dun;
+    int bb;
+    int cc;
+    int dd;
 };
 

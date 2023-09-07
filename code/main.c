@@ -8,21 +8,23 @@
 
 
 
-#define ApplyMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
-#define DrawSync   	    ( (void(FNC*)(int)) 0x800f4098 )
-#define LoadImage   	( (void(FNC*)(RECT*,void*)) 0x800f42ac )
-#define memset   	    ( (void*(FNC*)(void*,byte,int)) 0x800f6f00 )
-#define printf   	    ( (int(FNC*)(char*,...)) 0x800f6f10 )
-#define TransposeMatrix ( (MATRIX*(FNC*)(MATRIX*,MATRIX*)) 0x800f9134 )
-#define SquareRoot0   	( (long(FNC*)(long)) 0x800f9174 )
-#define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
-#define rcos   	        ( (int(FNC*)(int)) 0x800f92a4 )
-#define rsin   	        ( (int(FNC*)(int)) 0x800f9344 )
-#define CompMatrixLV   	( (MATRIX*(FNC*)(MATRIX*,MATRIX*,MATRIX*)) 0x800f96e8 )
-#define RotMatrixYXZ    ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
-#define MulMatrix0      ( (MATRIX*(FNC*)(MATRIX*,MATRIX*,MATRIX*)) 0x800f9bc8 )
-#define GsGetTimInfo   	( (void(FNC*)(ulong*,GsIMAGE*)) 0x800f9cd8 )
-#define strcmp   	    ( (int(FNC*)(char*,char*)) 0x800fb018 )
+
+#define ApplyMatrixLV            ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
+#define DrawSync   	             ( (void(FNC*)(int)) 0x800f4098 )
+#define LoadImage   	         ( (void(FNC*)(RECT*,void*)) 0x800f42ac )
+#define memset   	             ( (void*(FNC*)(void*,byte,int)) 0x800f6f00 )
+#define printf   	             ( (int(FNC*)(char*,...)) 0x800f6f10 )
+#define TransposeMatrix          ( (MATRIX*(FNC*)(MATRIX*,MATRIX*)) 0x800f9134 )
+#define SquareRoot0   	         ( (long(FNC*)(long)) 0x800f9174 )
+#define SquareRoot12   	         ( (long(FNC*)(long)) 0x800f9204 )
+#define rcos   	                 ( (int(FNC*)(int)) 0x800f92a4 )
+#define rsin   	                 ( (int(FNC*)(int)) 0x800f9344 )
+#define ApplyTransposeMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f9414 )
+#define CompMatrixLV   	         ( (MATRIX*(FNC*)(MATRIX*,MATRIX*,MATRIX*)) 0x800f96e8 )
+#define RotMatrixYXZ             ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
+#define MulMatrix0               ( (MATRIX*(FNC*)(MATRIX*,MATRIX*,MATRIX*)) 0x800f9bc8 )
+#define GsGetTimInfo   	         ( (void(FNC*)(ulong*,GsIMAGE*)) 0x800f9cd8 )
+#define strcmp   	             ( (int(FNC*)(char*,char*)) 0x800fb018 )
 
 //-------- data
 
@@ -2724,6 +2726,136 @@ int f_800238bc_vec_bits_mults(VECTOR *vc1,int val,VECTOR *out)
   }
   return 0;
 }
+
+
+
+
+int f_800235c0_vec_v(VECTOR *vc,int val,VECTOR *out)
+{
+  int q1;
+  int q2;
+  int hmm [2];
+  
+  f_800231bc_vec_sqsq(vc,hmm);
+  q1 = 7;
+  if (hmm[0] != 0) {
+    q1 = vc->vx * val;
+    if (hmm[0] == 0) {
+      trap(0x1c00);
+    }
+    if ((hmm[0] == -1) && (q1 == -0x80000000)) {
+      trap(0x1800);
+    }
+    out->vx = q1 / hmm[0];
+    q1 = vc->vy * val;
+    if (hmm[0] == 0) {
+      trap(0x1c00);
+    }
+    if ((hmm[0] == -1) && (q1 == -0x80000000)) {
+      trap(0x1800);
+    }
+    out->vy = q1 / hmm[0];
+    q2 = vc->vz * val;
+    if (hmm[0] == 0) {
+      trap(0x1c00);
+    }
+    if ((hmm[0] == -1) && (q2 == -0x80000000)) {
+      trap(0x1800);
+    }
+    q1 = 0;
+    out->vz = q2 / hmm[0];
+  }
+  return q1;
+}
+
+
+
+
+int f_800236f8_vc_drp(VECTOR *vc1,int val,VECTOR *out)
+{
+  int iVar1;
+  uint aa;
+  uint aa_00;
+  uint aa_01;
+  uint hmm [2];
+  
+  f_800231bc_vec_sqsq(vc1,(int *)hmm);
+  iVar1 = 7;
+  if (hmm[0] != 0) {
+    aa = f_80010698_bits(vc1->vx,hmm[0]);
+    aa_00 = f_80010698_bits(vc1->vy,hmm[0]);
+    aa_01 = f_80010698_bits(vc1->vz,hmm[0]);
+    iVar1 = f_80010654_longlong_mult(aa,val);
+    out->vx = iVar1;
+    iVar1 = f_80010654_longlong_mult(aa_00,val);
+    out->vy = iVar1;
+    iVar1 = f_80010654_longlong_mult(aa_01,val);
+    out->vz = iVar1;
+    iVar1 = 0;
+  }
+  return iVar1;
+}
+
+
+
+
+
+int f_800237b4_vc_drp2(VECTOR *vv,int val,VECTOR *out)
+{
+  uint uVar1;
+  int iVar2;
+  long lVar3;
+  long lVar4;
+  long lVar5;
+  uint hmmm [2];
+  
+  if (val == 0) {
+    out->vz = 0;
+    out->vy = 0;
+    out->vx = 0;
+  }
+  else {
+    f_800231bc_vec_sqsq(vv,(int *)hmmm);
+    if (val < 0) {
+      val = -val;
+    }
+    if (val < (int)hmmm[0]) {
+      uVar1 = f_80010698_bits(vv->vx,hmmm[0]);
+      out->vx = uVar1;
+      uVar1 = f_80010698_bits(vv->vy,hmmm[0]);
+      out->vy = uVar1;
+      uVar1 = f_80010698_bits(vv->vz,hmmm[0]);
+      out->vz = uVar1;
+      iVar2 = f_80010654_longlong_mult(out->vx,val);
+      out->vx = iVar2;
+      iVar2 = f_80010654_longlong_mult(out->vy,val);
+      out->vy = iVar2;
+      iVar2 = f_80010654_longlong_mult(out->vz,val);
+      out->vz = iVar2;
+    }
+    else {
+      lVar3 = vv->vy;
+      lVar4 = vv->vz;
+      lVar5 = vv->pad;
+      out->vx = vv->vx;
+      out->vy = lVar3;
+      out->vz = lVar4;
+      out->pad = lVar5;
+    }
+  }
+  return 0;
+}
+
+
+
+
+int f_800290f0_apply_transp_lv(VECTOR *v1,MATRIX *mtx,VECTOR *v2)
+{
+    printf("transp !\n");
+    ApplyTransposeMatrixLV(mtx,v1,v2);
+    return 0;
+}
+
 
 
 

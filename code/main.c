@@ -14,6 +14,7 @@
 #define memset   	    ( (void*(FNC*)(void*,byte,int)) 0x800f6f00 )
 #define printf   	    ( (int(FNC*)(char*,...)) 0x800f6f10 )
 #define TransposeMatrix ( (MATRIX*(FNC*)(MATRIX*,MATRIX*)) 0x800f9134 )
+#define SquareRoot0   	( (long(FNC*)(long)) 0x800f9174 )
 #define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
 #define rcos   	        ( (int(FNC*)(int)) 0x800f92a4 )
 #define rsin   	        ( (int(FNC*)(int)) 0x800f9344 )
@@ -50,6 +51,8 @@ typedef int ARR_TMP1[4];
 #define g_80121b88_main_mode            EXTEXT(0x80121b88,uint)
 
 
+
+#define g_8010b634_glo_vc3              EXTEXT(0x8010b634,VECTOR)
 
 #define g_80122130_midi_speed           EXTEXT(0x80122130,uint)
 
@@ -2510,6 +2513,138 @@ int f_800258d4_node_more4(Node *n1,Node *n2,VECTOR *vv)
     n1->f_20_n1->f_2c_b0 = 1;
   }
   return i1;
+}
+
+
+
+
+void f_800259a0_node_mini(Node *n1,VECTOR *vc)
+{
+  Node *n2;
+  
+  if (n1->f_20_n1 == (Node *)0x0) {
+    n2 = (Node *)0x0;
+  }
+  else {
+    n2 = n1->f_20_n1->f_20_n1;
+  }
+  f_800258d4_node_more4(n1,n2,vc);
+  return;
+}
+
+
+
+
+int f_800259dc_shuf_vc(MATRIX *a0,MATRIX *a1,VECTOR *out)
+{
+  MATRIX m;
+  
+  f_80024c34_mtx_shuffles(a0,a1,&m);
+  out->vx = (int)m.m[2];
+  out->vy = (int)m.m[5];
+  out->vz = (int)m.m[8];
+  return 0;
+}
+
+
+
+
+int f_80025a2c_mtx_separate_vecs(MATRIX *mtx1,MATRIX *mtx2,VECTOR *ov1,VECTOR *ov2,VECTOR *ov3)
+{
+  MATRIX mt;
+  
+  f_80024c34_mtx_shuffles(mtx1,mtx2,&mt);
+  ov1->vx = (int)mt.m[0];
+  ov1->vy = (int)mt.m[3];
+  ov1->vz = (int)mt.m[6];
+  ov2->vx = (int)mt.m[1];
+  ov2->vy = (int)mt.m[4];
+  ov2->vz = (int)mt.m[7];
+  ov3->vx = (int)mt.m[2];
+  ov3->vy = (int)mt.m[5];
+  ov3->vz = (int)mt.m[8];
+  return 0;
+}
+
+
+
+
+int f_80025e54_mtx_mini2(VECTOR *ve1,MATRIX *mt1,MATRIX *mt2,VECTOR *ve2)
+{
+  int i1;
+  MATRIX loca;
+  
+  i1 = f_80024c34_mtx_shuffles(mt1,mt2,&loca);
+  ApplyMatrixLV(&loca,ve1,ve2);
+  return i1;
+}
+
+
+
+
+
+int f_800231bc_vec_sqsq(VECTOR *v0,int *out)
+{
+  long i3;
+  int i1;
+  int i2;
+  int q1;
+  int q2;
+  int q3;
+  int q4;
+  VECTOR aa1;
+  VECTOR aa2;
+
+  aa1.vx = g_8010b634_glo_vc3.vx;
+  aa1.vy = g_8010b634_glo_vc3.vy;
+  aa1.vz = g_8010b634_glo_vc3.vz;
+  aa2.vx = g_8010b634_glo_vc3.vx;
+  aa2.vy = g_8010b634_glo_vc3.vy;
+  aa2.vz = g_8010b634_glo_vc3.vz;
+  aa2.pad = g_8010b634_glo_vc3.pad;
+  i1 = v0->vx;
+  i2 = i1;
+  if (i1 < 0) {
+    i2 = -i1;
+  }
+  if (i2 < 0x1a20be) {
+    q2 = v0->vy;
+    q4 = q2;
+    if (q2 < 0) {
+      q4 = -q2;
+    }
+    if (q4 < 0x1a20be) {
+      q1 = v0->vz;
+      q3 = q1;
+      if (q1 < 0) {
+        q3 = -q1;
+      }
+      if (q3 < 0x1a20be) {
+        if (((i2 < 0x6883) && (q4 < 0x6883)) && (q3 < 0x6883)) {
+          i3 = SquareRoot0(i1 * i1 + q2 * q2 + q1 * q1);
+          *out = i3;
+          return 0;
+        }
+        i2 = v0->vx;
+        if (i2 != 0) {
+          aa1.vx = f_80010654_longlong_mult(i2,i2);
+        }
+        i2 = v0->vy;
+        if (i2 != 0) {
+          aa1.vy = f_80010654_longlong_mult(i2,i2);
+        }
+        i2 = v0->vz;
+        if (i2 != 0) {
+          aa1.vz = f_80010654_longlong_mult(i2,i2);
+        }
+        i3 = SquareRoot12(aa1.vx + aa1.vy + aa1.vz);
+        *out = i3;
+        return 0;
+      }
+    }
+  }
+  f_80027d88_vec_xyz_sht(&aa2,v0,out);
+  return 0;
 }
 
 

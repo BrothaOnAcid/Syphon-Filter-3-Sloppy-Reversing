@@ -4,6 +4,10 @@
 
 //------ funcs
 
+
+
+
+
 #define ApplyMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
 
 #define DrawSync   	    ( (void(FNC*)(int)) 0x800f4098 )
@@ -14,6 +18,7 @@
 
 #define printf   	    ( (int(FNC*)(char*,...)) 0x800f6f10 )
 
+#define TransposeMatrix ( (MATRIX*(FNC*)(MATRIX*,MATRIX*)) 0x800f9134 )
 #define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
 
 #define RotMatrixYXZ    ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
@@ -36,6 +41,17 @@ typedef uint ARR_ANGANG[4096];
 typedef int ARR_TMP1[4];
 #define g_8011fcb0_ar_vol_sht           EXTEXT(0x8011fcb0,ARR_TMP1)
 
+
+
+// 0: gameplay
+// 1: briefing loading ?
+// 3: fmv ?
+// 4: menu, mem-card
+// 6: menu transition ?
+// 7: pause menu ?
+// 8: briefing ready ?
+// 9: transition to pause-menu ?
+#define g_80121b88_main_mode            EXTEXT(0x80121b88,uint)
 
 
 
@@ -1520,8 +1536,6 @@ int f_800277ac_str_tab_search(StrTabHead *tt,char *nam,int *ret)
   int i3;
   byte b;
   
-  //printf("str tab search.. %p %s\n", tt, nam);
-
   
   if ((((tt == (StrTabHead *)0x0) || (tt->ptr_dun == (byte *)0x0)) || (nam == (char *)0x0)) ||
      (i2 = 0, ret == (int *)0x0)) {
@@ -1656,6 +1670,65 @@ int f_800276d4_str_tab_get_p(StrTabHead *unun,int ind,byte *im)
   }
   return i;
 }
+
+
+
+
+
+uint f_8002c7bc_mode_check(void)
+{
+  uint r;
+  
+  r = 0;
+  if ((g_80121b88_main_mode != 0) && (1 < g_80121b88_main_mode - 5)) {
+    r = (uint)(g_80121b88_main_mode != 9);
+  }
+  return r;
+}
+
+
+
+int f_8001ce40_util1(uint v)
+{
+  int i1;
+  
+  if (v == 0) {
+    i1 = 0x2000;
+  }
+  else {
+    i1 = (v & 0xffff) + ((int)(0x1000 - (v & 0xffff)) >> (((int)v >> 0x10) - 1U & 0x1f));
+  }
+  return i1;
+}
+
+
+
+
+
+
+
+
+
+
+int f_80023bf4_node_mtx_transp_lv(Node *nnn,MATRIX *mt)
+{
+  VECTOR vv;
+  
+  TransposeMatrix(&nnn->f_00_mtx,mt);
+  mt->t[0] = (nnn->f_00_mtx).t[0];
+  mt->t[1] = (nnn->f_00_mtx).t[1];
+  mt->t[2] = (nnn->f_00_mtx).t[2];
+  vv.vx = -(nnn->f_00_mtx).t[0];
+  vv.vy = -(nnn->f_00_mtx).t[1];
+  vv.vz = -(nnn->f_00_mtx).t[2];
+  ApplyMatrixLV(mt,&vv,&vv);
+  mt->t[0] = vv.vx;
+  mt->t[1] = vv.vy;
+  mt->t[2] = vv.vz;
+  return 0;
+}
+
+
 
 
 

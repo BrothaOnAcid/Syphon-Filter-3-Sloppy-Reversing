@@ -107,6 +107,7 @@ typedef struct ImgDerp      ImgDerp;
 
 
 typedef struct StrTabHead   StrTabHead;
+typedef struct Node         Node;
 
 
 struct BankProps {
@@ -950,5 +951,17 @@ struct StrTabHead {
     int bb;
     int cc;
     int dd;
+};
+
+
+struct Node {
+    MATRIX f_00_mtx;
+    Node * f_20_n1;
+    Node * f_24_n2;
+    Node * f_24_n3;
+    byte f_2c_b0;
+    byte f_2d_b1;
+    byte f_2e_b2;
+    byte f_2f_b3;
 };
 

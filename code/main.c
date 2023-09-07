@@ -4,11 +4,17 @@
 
 //------ funcs
 
+#define ApplyMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
+
+#define memset   	    ( (void*(FNC*)(void*,byte,int)) 0x800f6f00 )
+
 #define printf   	    ( (int(FNC*)(char*,...)) 0x800f6f10 )
 
 #define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
 
-#define ApplyMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
+#define RotMatrixYXZ   ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
+
+
 
 
 
@@ -1329,7 +1335,7 @@ void f_80057e04_wpn_two_shorts(DonkSub1 *s,short s1,short s2)
 
 int f_8005ed6c_mini1(char aa,int *ret)
 {
-    printf("MINI 1 %d\n", aa);
+  
   if (aa == '\0') {
     if (*ret < 0) {
       return 0;
@@ -1345,6 +1351,94 @@ int f_8005ed6c_mini1(char aa,int *ret)
   return 1;
 }
 
+
+inline ushort __EvilGet2_2(void* src)
+{
+	ushort* s = (ushort*)src;
+	return s[1];
+}
+
+
+
+int f_80028344_mtx_rot_yxz(VECTOR *q,VECTOR *ret)
+{
+  MATRIX mmm;
+  int svsv [4];
+  
+  memset(svsv + 2,0,8);
+  svsv[0] = q->vx & 0xffffU | q->vy << 0x10;
+  svsv[3] = q->vz & 0xffffU | (uint)__EvilGet2_2(&svsv[3]) << 0x10;
+  svsv[1] = svsv[3];
+  svsv[2] = svsv[0];
+
+  RotMatrixYXZ((SVECTOR *)svsv,&mmm);
+  ret->vx = (int)mmm.m[2];
+  ret->vy = (int)mmm.m[5];
+  ret->vz = (int)mmm.m[8];
+  return 0;
+}
+
+
+
+
+void f_8005584c_mtx_rotz_yxz(PlaStAtF4 *unk_st,VECTOR *vc)
+{
+  long lVar1;
+  long lVar2;
+  long lVar3;
+  
+  if (vc != 0x0) {
+    lVar1 = vc->vy;
+    lVar2 = vc->vz;
+    lVar3 = vc->pad;
+    (unk_st->f_224_vc).vx = vc->vx;
+    (unk_st->f_224_vc).vy = lVar1;
+    (unk_st->f_224_vc).vz = lVar2;
+    (unk_st->f_224_vc).pad = lVar3;
+    f_80028344_mtx_rot_yxz(vc,&unk_st->f_234_vc2);
+  }
+  lVar1 = (unk_st->f_224_vc).vy;
+  lVar2 = (unk_st->f_224_vc).vy;
+  unk_st->f_214_i = 0;
+  unk_st->f_21c_i2 = 0;
+  unk_st->f_218_i3 = lVar1;
+  unk_st->f_220_i4 = lVar2;
+  return;
+}
+
+
+
+
+
+void f_800558bc_vec_u7(PlaStAtF4 *s,VECTOR *vc)
+{
+  uint u1;
+  long i1;
+  long i3;
+  long i2;
+  
+  s->f_218_i3 = (s->f_224_vc).vy;
+  s->f_214_i = s->f_21c_i2;
+  if (vc != (VECTOR *)0x0) {
+    s->f_220_i4 = vc->vy;
+  }
+  u1 = s->f_220_i4 - s->f_218_i3 & 0xfff;
+  s->f_21c_i2 = u1;
+  if (0x800 < u1) {
+    s->f_21c_i2 = u1 - 0x1000;
+  }
+  if (vc != (VECTOR *)0x0) {
+    i1 = vc->vy;
+    i3 = vc->vz;
+    i2 = vc->pad;
+    (s->f_224_vc).vx = vc->vx;
+    (s->f_224_vc).vy = i1;
+    (s->f_224_vc).vz = i3;
+    (s->f_224_vc).pad = i2;
+    f_80028344_mtx_rot_yxz(vc,&s->f_234_vc2);
+  }
+  return;
+}
 
 
 

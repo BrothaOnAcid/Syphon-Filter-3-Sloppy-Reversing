@@ -1733,8 +1733,6 @@ int f_80023080_sin_cos(int ang,uint *out)
   uint bb;
   int i1;
   
-  printf("sin-cos sht %d %08X\n", ang, out);
-  
   u1 = rsin(ang);
   bb = rcos(ang);
   if (bb == 0) {
@@ -1749,6 +1747,122 @@ int f_80023080_sin_cos(int ang,uint *out)
   return i1;
 }
 
+
+
+// mad skillz
+int f_80023374_vec_calc_smt(VECTOR *vec,int *out)
+{
+  undefined uVar1;
+  undefined2 uVar2;
+  undefined4 ii3;
+  int iVar3;
+  uint u4;
+  uint uVar4;
+  int p3;
+  int *plVar4;
+  VECTOR *p1;
+  VECTOR *p2;
+  int i2;
+  VECTOR loc;
+  
+  loc.vx = vec->vx;
+  p1 = &loc;
+  p2 = &loc;
+  if (loc.vx < 0) {
+    loc.vx = -loc.vx;
+  }
+  loc.vy = vec->vy;
+  loc.vz = vec->vz;
+  if (loc.vy < 0) {
+    loc.vy = -loc.vy;
+  }
+  if (loc.vz < 0) {
+    loc.vz = -loc.vz;
+  }
+  if (loc.vx < loc.vy) {
+    p3 = (int)&loc.vy;
+    if (true) {
+      u4 = 4;
+      if (false) {
+        u4 = 2;
+      }
+    }
+    else {
+      u4 = 1;
+    }
+    if (u4 == 0) {
+      trap(0x1c00);
+    }
+    i2 = 4 / u4 - 1;
+    if (i2 != -1) {
+      do {
+        if (u4 == 2) {
+          uVar2 = *(undefined2 *)p1;
+          *(undefined2 *)p1 = *(undefined2 *)p3;
+          *(undefined2 *)p3 = uVar2;
+        }
+        else if (u4 < 3) {
+          if (u4 == 1) {
+            uVar1 = *(undefined *)p1;
+            *(undefined *)p1 = *(undefined *)p3;
+            *(undefined *)p3 = uVar1;
+          }
+        }
+        else if (u4 == 4) {
+          ii3 = p1->vx;
+          p1->vx = *(undefined4 *)p3;
+          *(undefined4 *)p3 = ii3;
+        }
+        p1 = (VECTOR *)((int)p1 + u4);
+        i2 = i2 + -1;
+        p3 = p3 + u4;
+      } while (i2 != -1);
+    }
+  }
+  if (loc.vx < loc.vz) {
+    plVar4 = &loc.vz;
+    if (true) {
+      uVar4 = 4;
+      if (false) {
+        uVar4 = 2;
+      }
+    }
+    else {
+      uVar4 = 1;
+    }
+    if (uVar4 == 0) {
+      trap(0x1c00);
+    }
+    i2 = 4 / uVar4 - 1;
+    if (i2 != -1) {
+      do {
+        if (uVar4 == 2) {
+          uVar2 = *(undefined2 *)p2;
+          *(undefined2 *)p2 = *(undefined2 *)plVar4;
+          *(undefined2 *)plVar4 = uVar2;
+        }
+        else if (uVar4 < 3) {
+          if (uVar4 == 1) {
+            uVar1 = *(undefined *)p2;
+            *(undefined *)p2 = *(undefined *)plVar4;
+            *(undefined *)plVar4 = uVar1;
+          }
+        }
+        else if (uVar4 == 4) {
+          iVar3 = p2->vx;
+          p2->vx = *plVar4;
+          *plVar4 = iVar3;
+        }
+        p2 = (VECTOR *)((int)p2 + uVar4);
+        i2 = i2 + -1;
+        plVar4 = (int *)((int)plVar4 + uVar4);
+      } while (i2 != -1);
+    }
+  }
+  *out = loc.vx + (loc.vy + loc.vz >> 2);
+  
+  return 1;
+}
 
 
 

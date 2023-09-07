@@ -4,6 +4,10 @@
 
 //------ funcs
 
+
+
+
+
 #define ApplyMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
 #define DrawSync   	    ( (void(FNC*)(int)) 0x800f4098 )
 #define LoadImage   	( (void(FNC*)(RECT*,void*)) 0x800f42ac )
@@ -15,6 +19,7 @@
 #define rsin   	        ( (int(FNC*)(int)) 0x800f9344 )
 #define CompMatrixLV   	( (MATRIX*(FNC*)(MATRIX*,MATRIX*,MATRIX*)) 0x800f96e8 )
 #define RotMatrixYXZ    ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
+#define MulMatrix0      ( (MATRIX*(FNC*)(MATRIX*,MATRIX*,MATRIX*)) 0x800f9bc8 )
 #define GsGetTimInfo   	( (void(FNC*)(ulong*,GsIMAGE*)) 0x800f9cd8 )
 #define strcmp   	    ( (int(FNC*)(char*,char*)) 0x800fb018 )
 
@@ -24,7 +29,7 @@
 
 
 
-
+#define g_8010f0d0_mtx_ident            EXTEXT(0x8010f0d0,MATRIX)
 
 typedef uint ARR_ANGANG[4096];
 #define g_8011aa6c_ang_table            EXTEXT(0x8011aa6c,ARR_ANGANG)
@@ -1919,8 +1924,6 @@ int f_80024668_nodes_calc_mtx_recursive(Node *nn)
   Node *n2;
   Node *n3;
   
-  printf("mtx rec.. %p\n", nn);
-  
   if (nn == (Node *)0x0) {
     r1 = 0x18;
   }
@@ -1970,6 +1973,135 @@ LAB_80024698:
   }
   return r1;
 }
+
+
+
+
+int f_80024b28_node_shuff(Node *no)
+{
+  Node *n3;
+  int i1;
+  Node *n1;
+  Node *n2;
+  
+  if (no == (Node *)0x0) {
+    return 0;
+  }
+  n2 = no->f_20_n1;
+  if (n2 == (Node *)0x0) {
+    return 0x2b;
+  }
+  if (n2->f_20_n1 == (Node *)0x0) {
+    return 0;
+  }
+  n1 = n2->f_20_n1->f_20_n1;
+  if (n1 == (Node *)0x0) {
+    return 0x2b;
+  }
+  n3 = n1->f_24_n3;
+  if (n3 == (Node *)0x0) {
+LAB_80024bd8:
+    i1 = 0x2b;
+  }
+  else {
+    if (no == n3) {
+      n1->f_24_n3 = n2->f_24_n2;
+    }
+    else {
+      do {
+        n2 = n3;
+        n1 = n2->f_20_n1;
+        if (n1 == (Node *)0x0) {
+          return 0x2b;
+        }
+        n3 = n1->f_24_n2;
+      } while ((n3 != (Node *)0x0) && (n3 != no));
+      n2 = n2->f_20_n1;
+      if (n2 == (Node *)0x0) {
+        return 0x2b;
+      }
+      if (n2->f_24_n2 == (Node *)0x0) goto LAB_80024bd8;
+      n2->f_24_n2 = no->f_20_n1->f_24_n2;
+    }
+    i1 = 0;
+    no->f_20_n1->f_20_n1 = (Node *)0x0;
+    no->f_20_n1->f_2c_b0 = 1;
+  }
+  return i1;
+}
+
+
+
+
+int f_80024c14_node_calc_all(Node *nnn)
+{
+  int i;
+  
+  i = f_80024668_nodes_calc_mtx_recursive(nnn);
+  return i;
+}
+
+
+
+
+int f_80024c34_mtx_shuffles(MATRIX *aa,MATRIX *bb,MATRIX *cc)
+{
+  int t3;
+  MATRIX mt;
+  short t1;
+  short t2;
+  
+  if (bb == aa) {
+    cc->m[0] = g_8010f0d0_mtx_ident.m[0];
+    cc->m[1] = g_8010f0d0_mtx_ident.m[1];
+    cc->m[2] = g_8010f0d0_mtx_ident.m[2];
+    cc->m[3] = g_8010f0d0_mtx_ident.m[3];
+    cc->m[4] = g_8010f0d0_mtx_ident.m[4];
+    cc->m[5] = g_8010f0d0_mtx_ident.m[5];
+    cc->m[6] = g_8010f0d0_mtx_ident.m[6];
+    cc->m[7] = g_8010f0d0_mtx_ident.m[7];
+    cc->m[8] = g_8010f0d0_mtx_ident.m[8];
+  }
+  else if (bb == (MATRIX *)0x0) {
+    cc->m[0] = aa->m[0];
+    cc->m[1] = aa->m[1];
+    cc->m[2] = aa->m[2];
+    cc->m[3] = aa->m[3];
+    cc->m[4] = aa->m[4];
+    cc->m[5] = aa->m[5];
+    cc->m[6] = aa->m[6];
+    cc->m[7] = aa->m[7];
+    cc->m[8] = aa->m[8];
+  }
+  else if (aa == (MATRIX *)0x0) {
+    TransposeMatrix(bb,cc);
+    cc->t[0] = bb->t[0];
+    cc->t[1] = bb->t[1];
+    cc->t[2] = bb->t[2];
+  }
+  else {
+    TransposeMatrix(bb,&mt);
+    mt.t[0] = bb->t[0];
+    mt.t[1] = bb->t[1];
+    mt.t[2] = bb->t[2];
+    MulMatrix0(&mt,aa,cc);
+  }
+  t1 = cc->m[1];
+  t2 = cc->m[5];
+  cc->t[0] = 0;
+  cc->t[1] = 0;
+  cc->t[2] = 0;
+  cc->m[1] = -t1;
+  cc->m[5] = -t2;
+  t3 = cc->t[1];
+  cc->m[3] = -cc->m[3];
+  t1 = cc->m[7];
+  cc->t[1] = -t3;
+  cc->m[7] = -t1;
+  return 0;
+}
+
+
 
 
 

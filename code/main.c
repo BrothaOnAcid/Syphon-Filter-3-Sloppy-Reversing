@@ -2225,6 +2225,190 @@ void f_80025070_node_again(Node *n1,VECTOR *vc)
 
 
 
+int f_800254ec_node_mtx(Node *n1,Node *n2,MATRIX *out)
+{
+  int iVar1;
+  undefined4 uVar2;
+  long lVar3;
+  Node *nnn;
+  undefined4 uVar4;
+  long lVar5;
+  undefined4 uVar6;
+  long lVar7;
+  MATRIX *p_mtx;
+  Node *m2;
+  MATRIX ar_mtx_loc [2];
+  short s1;
+  
+  if (n1 == (Node *)0x0) {
+    return 0x18;
+  }
+  out->m[1] = -out->m[1];
+  out->m[5] = -out->m[5];
+  iVar1 = out->t[1];
+  out->m[3] = -out->m[3];
+  s1 = out->m[7];
+  out->t[1] = -iVar1;
+  out->m[7] = -s1;
+  m2 = n1->f_20_n1;
+  if (m2 == (Node *)0x0) {
+    if (n2 == (Node *)0x0) {
+      uVar2 = *(undefined4 *)(out->m + 2);
+      uVar4 = *(undefined4 *)(out->m + 4);
+      uVar6 = *(undefined4 *)(out->m + 6);
+      *(undefined4 *)(n1->f_00_mtx).m = *(undefined4 *)out->m;
+      *(undefined4 *)((n1->f_00_mtx).m + 2) = uVar2;
+      *(undefined4 *)((n1->f_00_mtx).m + 4) = uVar4;
+      *(undefined4 *)((n1->f_00_mtx).m + 6) = uVar6;
+      lVar3 = out->t[0];
+      lVar5 = out->t[1];
+      lVar7 = out->t[2];
+      *(undefined4 *)((n1->f_00_mtx).m + 8) = *(undefined4 *)(out->m + 8);
+      (n1->f_00_mtx).t[0] = lVar3;
+      (n1->f_00_mtx).t[1] = lVar5;
+      (n1->f_00_mtx).t[2] = lVar7;
+    }
+    else {
+      CompMatrixLV(&n2->f_00_mtx,out,&n1->f_00_mtx);
+    }
+    goto LAB_80025698;
+  }
+  nnn = m2->f_20_n1;
+  if (n2 == nnn) {
+    uVar2 = *(undefined4 *)(out->m + 2);
+    uVar4 = *(undefined4 *)(out->m + 4);
+    uVar6 = *(undefined4 *)(out->m + 6);
+    *(undefined4 *)(m2->f_00_mtx).m = *(undefined4 *)out->m;
+    *(undefined4 *)((m2->f_00_mtx).m + 2) = uVar2;
+    *(undefined4 *)((m2->f_00_mtx).m + 4) = uVar4;
+    *(undefined4 *)((m2->f_00_mtx).m + 6) = uVar6;
+    lVar3 = out->t[0];
+    lVar5 = out->t[1];
+    lVar7 = out->t[2];
+    *(undefined4 *)((m2->f_00_mtx).m + 8) = *(undefined4 *)(out->m + 8);
+    (m2->f_00_mtx).t[0] = lVar3;
+    (m2->f_00_mtx).t[1] = lVar5;
+    (m2->f_00_mtx).t[2] = lVar7;
+  }
+  else {
+    p_mtx = out;
+    if (n2 == (Node *)0x0) {
+      if (nnn == (Node *)0x0) {
+LAB_800255f0:
+        CompMatrixLV(&n2->f_00_mtx,out,ar_mtx_loc + 1);
+        f_80023bf4_node_mtx_transp_lv(n1->f_20_n1->f_20_n1,ar_mtx_loc);
+        n2 = (Node *)ar_mtx_loc;
+        m2 = n1->f_20_n1;
+        p_mtx = ar_mtx_loc + 1;
+      }
+      else {
+        f_80023bf4_node_mtx_transp_lv(nnn,ar_mtx_loc);
+        n2 = (Node *)ar_mtx_loc;
+        m2 = n1->f_20_n1;
+      }
+    }
+    else if (nnn != (Node *)0x0) goto LAB_800255f0;
+    CompMatrixLV(&n2->f_00_mtx,p_mtx,&m2->f_00_mtx);
+  }
+  n1->f_20_n1->f_2c_b0 = 1;
+LAB_80025698:
+  out->m[1] = -out->m[1];
+  out->m[5] = -out->m[5];
+  iVar1 = out->t[1];
+  out->m[3] = -out->m[3];
+  s1 = out->m[7];
+  out->t[1] = -iVar1;
+  out->m[7] = -s1;
+  return 0;
+}
+
+
+
+
+
+void f_8002515c_node_more(Node *n,MATRIX *m)
+{
+  Node *n2;
+  
+  if (n->f_20_n1 == (Node *)0x0) {
+    n2 = (Node *)0x0;
+  }
+  else {
+    n2 = n->f_20_n1->f_20_n1;
+  }
+  f_80025198_node_calcz2_mtx(n,n2,m);
+  return;
+}
+
+
+
+void f_800254b0_node_more2(Node *nn,MATRIX *ooo)
+{
+  Node *n2;
+  
+  if (nn->f_20_n1 == (Node *)0x0) {
+    n2 = (Node *)0x0;
+  }
+  else {
+    n2 = nn->f_20_n1->f_20_n1;
+  }
+  f_800254ec_node_mtx(nn,n2,ooo);
+  return;
+}
+
+
+
+
+void f_80025758_mtx_mini(MATRIX *m1,MATRIX *m2,VECTOR *rr)
+{
+  MATRIX mmm;
+  
+  f_80024c34_mtx_shuffles(m1,m2,&mmm);
+  rr->vx = (int)mmm.m[2];
+  rr->vy = (int)mmm.m[5];
+  rr->vz = (int)mmm.m[8];
+  return;
+}
+
+
+
+int f_800257a8_nodes_lv2(Node *n1,Node *n2,VECTOR *dst)
+{
+  MATRIX mt1;
+  MATRIX mmm;
+  
+  if (n2 == n1) {
+    dst->vx = 0;
+    dst->vy = 0;
+    dst->vz = 0;
+  }
+  else if (n2 == (Node *)0x0) {
+    dst->vx = (n1->f_00_mtx).t[0];
+    dst->vy = (n1->f_00_mtx).t[1];
+    dst->vz = (n1->f_00_mtx).t[2];
+  }
+  else if (n1 == (Node *)0x0) {
+    f_80023bf4_node_mtx_transp_lv(n2,&mt1);
+    dst->vx = mt1.t[0];
+    dst->vy = mt1.t[1];
+    dst->vz = mt1.t[2];
+  }
+  else {
+    dst->vx = (n1->f_00_mtx).t[0];
+    dst->vy = (n1->f_00_mtx).t[1];
+    dst->vz = (n1->f_00_mtx).t[2];
+    f_80023bf4_node_mtx_transp_lv(n2,&mmm);
+    ApplyMatrixLV(&mmm,dst,dst);
+    dst->vx = dst->vx + mmm.t[0];
+    dst->vy = dst->vy + mmm.t[1];
+    dst->vz = dst->vz + mmm.t[2];
+  }
+  dst->vy = -dst->vy;
+  return 0;
+}
+
+
+
 
 
 

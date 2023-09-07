@@ -2409,6 +2409,112 @@ int f_800257a8_nodes_lv2(Node *n1,Node *n2,VECTOR *dst)
 
 
 
+// works
+int f_80024e28_node_mtx_sht9(Node *n1,Node *n2,MATRIX *ooo)
+{
+  short sVar1;
+  undefined4 uVar2;
+  long i1;
+  undefined4 uVar3;
+  long i2;
+  int iVar4;
+  undefined4 uVar5;
+  long i3;
+  MATRIX loc;
+  
+  uVar3 = __EvilGet0_4(&g_8010f0d0_mtx_ident);
+  uVar2 = __EvilGet4_4(&g_8010f0d0_mtx_ident);
+  
+  if (n2 == n1) {
+    *(undefined4 *)ooo->m = __EvilGet0_4(&g_8010f0d0_mtx_ident);
+    *(undefined4 *)(ooo->m + 2) = uVar2;
+    *(undefined4 *)(ooo->m + 4) = uVar3;
+    i1 = g_8010f0d0_mtx_ident.t[0];
+    uVar2 = __EvilGet16_4(&g_8010f0d0_mtx_ident);;
+    *(undefined4 *)(ooo->m + 6) = __EvilGet12_4(&g_8010f0d0_mtx_ident);
+    *(undefined4 *)(ooo->m + 8) = uVar2;
+    ooo->t[0] = i1;
+    i1 = g_8010f0d0_mtx_ident.t[2];
+    ooo->t[1] = g_8010f0d0_mtx_ident.t[1];
+    ooo->t[2] = i1;
+  }
+  else if (n2 == (Node *)0x0) {
+    uVar2 = *(undefined4 *)((n1->f_00_mtx).m + 2);
+    uVar3 = *(undefined4 *)((n1->f_00_mtx).m + 4);
+    uVar5 = *(undefined4 *)((n1->f_00_mtx).m + 6);
+    *(undefined4 *)ooo->m = *(undefined4 *)(n1->f_00_mtx).m;
+    *(undefined4 *)(ooo->m + 2) = uVar2;
+    *(undefined4 *)(ooo->m + 4) = uVar3;
+    *(undefined4 *)(ooo->m + 6) = uVar5;
+    i1 = (n1->f_00_mtx).t[0];
+    i2 = (n1->f_00_mtx).t[1];
+    i3 = (n1->f_00_mtx).t[2];
+    *(undefined4 *)(ooo->m + 8) = *(undefined4 *)((n1->f_00_mtx).m + 8);
+    ooo->t[0] = i1;
+    ooo->t[1] = i2;
+    ooo->t[2] = i3;
+  }
+  else if (n1 == (Node *)0x0) {
+    f_80023bf4_node_mtx_transp_lv(n2,ooo);
+  }
+  else {
+    f_80023bf4_node_mtx_transp_lv(n2,&loc);
+    CompMatrixLV(&loc,&n1->f_00_mtx,ooo);
+  }
+  ooo->m[1] = -ooo->m[1];
+  ooo->m[5] = -ooo->m[5];
+  iVar4 = ooo->t[1];
+  ooo->m[3] = -ooo->m[3];
+  sVar1 = ooo->m[7];
+  ooo->t[1] = -iVar4;
+  ooo->m[7] = -sVar1;
+  return 0;
+}
+
+
+
+
+int f_80025dc4_node_more3(VECTOR *vc,Node *no,Node *no2,VECTOR *out)
+{
+  int i1;
+  MATRIX mt;
+  
+  i1 = f_80024e28_node_mtx_sht9(no,no2,&mt);
+  ApplyMatrixLV(&mt,vc,out);
+  out->vx = out->vx + mt.t[0];
+  out->vy = out->vy + mt.t[1];
+  out->vz = out->vz + mt.t[2];
+  return i1;
+}
+
+
+
+
+int f_800258d4_node_more4(Node *n1,Node *n2,VECTOR *vv)
+{
+  int i1;
+  VECTOR t1;
+  VECTOR t2;
+  
+  if (n1->f_20_n1 == (Node *)0x0) {
+    i1 = f_80025dc4_node_more3(vv,n2,(Node *)0x0,&t2);
+    (n1->f_00_mtx).t[0] = t2.vx;
+    (n1->f_00_mtx).t[1] = -t2.vy;
+    (n1->f_00_mtx).t[2] = t2.vz;
+  }
+  else {
+    i1 = f_80025dc4_node_more3(vv,n2,n1->f_20_n1->f_20_n1,&t1);
+    (n1->f_20_n1->f_00_mtx).t[0] = t1.vx;
+    (n1->f_20_n1->f_00_mtx).t[1] = -t1.vy;
+    (n1->f_20_n1->f_00_mtx).t[2] = t1.vz;
+    n1->f_20_n1->f_2c_b0 = 1;
+  }
+  return i1;
+}
+
+
+
+
 
 
 

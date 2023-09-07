@@ -976,3 +976,34 @@ inline ushort __EvilGet2_2(void* src)
 }
 
 
+inline uint __EvilGet0_4(void* src)
+{
+	uint* p = (uint*)src;
+	return p[0];
+}
+
+inline uint __EvilGet4_4(void* src)
+{
+	uint* p = (uint*)src;
+	return p[1];
+}
+
+inline uint __EvilGet8_4(void* src)
+{
+	uint* p = (uint*)src;
+	return p[2];
+}
+
+inline uint __EvilGet12_4(void* src)
+{
+	uint* p = (uint*)src;
+	return p[3];
+}
+
+inline uint __EvilGet16_4(void* src)
+{
+	uint* p = (uint*)src;
+	return p[4];
+}
+
+

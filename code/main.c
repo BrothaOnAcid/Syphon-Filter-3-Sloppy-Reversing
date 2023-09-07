@@ -13,6 +13,7 @@
 #define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
 #define rcos   	        ( (int(FNC*)(int)) 0x800f92a4 )
 #define rsin   	        ( (int(FNC*)(int)) 0x800f9344 )
+#define CompMatrixLV   	( (MATRIX*(FNC*)(MATRIX*,MATRIX*,MATRIX*)) 0x800f96e8 )
 #define RotMatrixYXZ    ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
 #define GsGetTimInfo   	( (void(FNC*)(ulong*,GsIMAGE*)) 0x800f9cd8 )
 #define strcmp   	    ( (int(FNC*)(char*,char*)) 0x800fb018 )
@@ -1886,6 +1887,88 @@ int f_80023bf4_node_mtx_transp_lv(Node *nnn,MATRIX *mt)
   mt->t[1] = vv.vy;
   mt->t[2] = vv.vz;
   return 0;
+}
+
+
+
+
+int f_800239c4_vec_node_lv(VECTOR *v1,Node *no,VECTOR *out)
+{
+  MATRIX mt;
+  
+  f_80023bf4_node_mtx_transp_lv(no,&mt);
+  ApplyMatrixLV(&mt,v1,out);
+  out->vx = out->vx + mt.t[0];
+  out->vy = out->vy + mt.t[1];
+  out->vz = out->vz + mt.t[2];
+  return 0;
+}
+
+
+
+
+int f_80024668_nodes_calc_mtx_recursive(Node *nn)
+{
+  int r1;
+  undefined4 uVar1;
+  long lVar2;
+  undefined4 uVar3;
+  long lVar4;
+  undefined4 uVar5;
+  long lVar6;
+  Node *n2;
+  Node *n3;
+  
+  printf("mtx rec.. %p\n", nn);
+  
+  if (nn == (Node *)0x0) {
+    r1 = 0x18;
+  }
+  else {
+    n2 = nn->f_20_n1;
+    if (n2 == (Node *)0x0) {
+LAB_80024698:
+      r1 = 0x2b;
+    }
+    else {
+      n3 = n2->f_20_n1;
+      if (n3 == (Node *)0x0) {
+        if (n2->f_2c_b0 == 1) {
+          uVar1 = *(undefined4 *)((n2->f_00_mtx).m + 2);
+          uVar3 = *(undefined4 *)((n2->f_00_mtx).m + 4);
+          uVar5 = *(undefined4 *)((n2->f_00_mtx).m + 6);
+          *(undefined4 *)(nn->f_00_mtx).m = *(undefined4 *)(n2->f_00_mtx).m;
+          *(undefined4 *)((nn->f_00_mtx).m + 2) = uVar1;
+          *(undefined4 *)((nn->f_00_mtx).m + 4) = uVar3;
+          *(undefined4 *)((nn->f_00_mtx).m + 6) = uVar5;
+          lVar2 = (n2->f_00_mtx).t[0];
+          lVar4 = (n2->f_00_mtx).t[1];
+          lVar6 = (n2->f_00_mtx).t[2];
+          *(undefined4 *)((nn->f_00_mtx).m + 8) = *(undefined4 *)((n2->f_00_mtx).m + 8);
+          (nn->f_00_mtx).t[0] = lVar2;
+          (nn->f_00_mtx).t[1] = lVar4;
+          (nn->f_00_mtx).t[2] = lVar6;
+        }
+      }
+      else {
+        r1 = f_80024668_nodes_calc_mtx_recursive(n3);
+        if (r1 != 0) {
+          return r1;
+        }
+        if (nn->f_20_n1->f_2c_b0 == 1) {
+          CompMatrixLV(&n3->f_00_mtx,&nn->f_20_n1->f_00_mtx,&nn->f_00_mtx);
+        }
+      }
+      nn->f_20_n1->f_2c_b0 = 0;
+      n2 = nn->f_20_n1->f_24_n3;
+      while (r1 = 0, n2 != (Node *)0x0) {
+        if (n2->f_20_n1 == (Node *)0x0) goto LAB_80024698;
+        n2->f_20_n1->f_2c_b0 = 1;
+        n2 = n2->f_20_n1->f_24_n2;
+      }
+    }
+  }
+  return r1;
 }
 
 

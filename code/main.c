@@ -6,22 +6,27 @@
 
 #define ApplyMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
 
+#define DrawSync   	    ( (void(FNC*)(int)) 0x800f4098 )
+
+#define LoadImage   	( (void(FNC*)(RECT*,void*)) 0x800f42ac )
+
 #define memset   	    ( (void*(FNC*)(void*,byte,int)) 0x800f6f00 )
 
 #define printf   	    ( (int(FNC*)(char*,...)) 0x800f6f10 )
 
 #define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
 
-#define RotMatrixYXZ   ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
+#define RotMatrixYXZ    ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
 
-
-
-
-
-
+#define GsGetTimInfo   	( (void(FNC*)(ulong*,GsIMAGE*)) 0x800f9cd8 )
 
 //-------- data
 
+
+
+
+typedef uint ARR_ANGANG[4096];
+#define g_8011aa6c_ang_table            EXTEXT(0x8011aa6c,ARR_ANGANG)
 
 typedef int ARR_TMP1[4];
 #define g_8011fcb0_ar_vol_sht           EXTEXT(0x8011fcb0,ARR_TMP1)
@@ -55,8 +60,6 @@ typedef WpnTabS10 ARR_WPNTAB1[83];
 
 typedef SndChan ARR_SND_CHANS[24];
 #define g_80145ac0_chans                EXTEXT(0x80145ac0,ARR_SND_CHANS)
-
-
 
 
 
@@ -1439,6 +1442,68 @@ void f_800558bc_vec_u7(PlaStAtF4 *s,VECTOR *vc)
   }
   return;
 }
+
+
+
+
+
+
+
+
+// menu weaponry tims
+int f_80025f10_load_images_vram(ImgDerp *q)
+{
+  int i1;
+  RECT rc1;
+  RECT rc2;
+  
+
+  DrawSync(0);
+  i1 = 0x13;
+  if (q != (ImgDerp *)0xfffffff4) {
+    rc1.x = (q->f_0c_gs_img).px;
+    rc1.y = (q->f_0c_gs_img).py;
+    rc1.w = (q->f_0c_gs_img).pw;
+    rc1.h = (q->f_0c_gs_img).ph;
+    LoadImage(&rc1,(q->f_0c_gs_img).pixel);
+    if (((q->f_0c_gs_img).pmode >> 3 & 1) != 0) {
+      rc2.x = (q->f_0c_gs_img).cx;
+      rc2.y = (q->f_0c_gs_img).cy;
+      rc2.w = (q->f_0c_gs_img).cw;
+      rc2.h = (q->f_0c_gs_img).ch;
+      LoadImage(&rc2,(q->f_0c_gs_img).clut);
+    }
+    q->f_09_mb_uploaded = 1;
+    i1 = 0;
+  }
+  return i1;
+}
+
+
+
+
+
+int f_80025eac_get_tim_info(ImgDerp *rrr)
+{
+  int i1;
+  int *pp;
+  
+  pp = (int *)rrr->f_00_ptr;
+  if ((pp == (int *)0x0) || (*pp != 0x10)) {
+    i1 = 0x13;
+  }
+  else {
+    GsGetTimInfo((ulong *)(pp + 1),&rrr->f_0c_gs_img);
+    i1 = 0;
+    rrr->f_28_dunno = 0;
+    rrr->f_09_mb_uploaded = 0;
+    rrr->f_08_dunno = 0;
+  }
+  return i1;
+}
+
+
+
 
 
 

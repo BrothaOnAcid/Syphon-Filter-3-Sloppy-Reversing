@@ -59,6 +59,32 @@ typedef struct MATRIX {
 } MATRIX;
 
 
+typedef struct RECT {
+    short x;
+    short y;
+    short w;
+    short h;
+} RECT;
+
+
+
+
+typedef struct GsIMAGE {
+    ulong pmode;
+    short px;
+    short py;
+    ushort pw;
+    ushort ph;
+    ulong * pixel;
+    short cx;
+    short cy;
+    ushort cw;
+    ushort ch;
+    ulong * clut;
+} GsIMAGE;
+
+
+
 //--------------------------------
 
 
@@ -76,6 +102,8 @@ typedef struct DonkSub2C    DonkSub2C;
 typedef struct WpnTabS10    WpnTabS10;
 
 typedef struct PlaStAtF4    PlaStAtF4;
+
+typedef struct ImgDerp      ImgDerp;
 
 
 struct BankProps {
@@ -895,4 +923,20 @@ struct PlaStAtF4 {
     VECTOR f_234_vc2;
 };
 
+
+
+
+struct ImgDerp {
+    byte * f_00_ptr;
+    undefined field1_0x4;
+    undefined field2_0x5;
+    undefined field3_0x6;
+    undefined field4_0x7;
+    byte f_08_dunno;
+    byte f_09_mb_uploaded;
+    undefined field7_0xa;
+    undefined field8_0xb;
+    GsIMAGE f_0c_gs_img;
+    int f_28_dunno;
+};
 

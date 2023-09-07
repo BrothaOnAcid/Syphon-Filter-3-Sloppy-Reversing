@@ -2651,6 +2651,83 @@ int f_800231bc_vec_sqsq(VECTOR *v0,int *out)
 
 
 
+int f_80027c44_vcs(VECTOR *vvv,VECTOR *vc2,int *out)
+{
+  VECTOR v1;
+  
+  v1.vx = vvv->vx - vc2->vx;
+  v1.vy = vvv->vy - vc2->vy;
+  v1.vz = vvv->vz - vc2->vz;
+  f_800231bc_vec_sqsq(&v1,out);
+  return 0;
+}
+
+
+
+int f_80027ca0_vcs_xz(VECTOR *v1,VECTOR *v2,int *out)
+{
+  VECTOR vv;
+  
+  vv.vx = v1->vx - v2->vx;
+  vv.vy = 0;
+  vv.vz = v1->vz - v2->vz;
+  f_800231bc_vec_sqsq(&vv,out);
+  return 0;
+}
+
+
+
+
+
+int f_800238bc_vec_bits_mults(VECTOR *vc1,int val,VECTOR *out)
+{
+  uint u1;
+  int i3;
+  long i5;
+  long i6;
+  long i2;
+  uint hmm [2];
+  
+  if (val == 0) {
+    out->vz = 0;
+    out->vy = 0;
+    out->vx = 0;
+  }
+  else {
+    f_800231bc_vec_sqsq(vc1,(int *)hmm);
+    if (val < 0) {
+      val = -val;
+    }
+    if (val < (int)hmm[0]) {
+      u1 = f_80010698_bits(vc1->vx,hmm[0]);
+      out->vx = u1;
+      u1 = f_80010698_bits(vc1->vy,hmm[0]);
+      out->vy = u1;
+      u1 = f_80010698_bits(vc1->vz,hmm[0]);
+      out->vz = u1;
+      i3 = f_80010654_longlong_mult(out->vx,val);
+      out->vx = i3;
+      i3 = f_80010654_longlong_mult(out->vy,val);
+      out->vy = i3;
+      i3 = f_80010654_longlong_mult(out->vz,val);
+      out->vz = i3;
+    }
+    else {
+      i5 = vc1->vy;
+      i6 = vc1->vz;
+      i2 = vc1->pad;
+      out->vx = vc1->vx;
+      out->vy = i5;
+      out->vz = i6;
+      out->pad = i2;
+    }
+  }
+  return 0;
+}
+
+
+
+
 
 
 #include "init_ovl.c"

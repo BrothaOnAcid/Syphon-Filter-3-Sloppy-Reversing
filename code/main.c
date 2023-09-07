@@ -1268,3 +1268,83 @@ DonkSub2C * f_800580e4_wpn_rel_fills_str(uint ii,DonkSub2C *pt)
 
 
 
+
+void f_80058190_wpn_helper1(int val,int num,DonkSub2C *pt)
+{
+  short *ppp;
+  int ii;
+  short s1;
+  short s2;
+  short sss;
+  
+  s1 = pt->f_04_s1;
+  s2 = pt->f_06_s2;
+  ii = 0;
+  if (0 < num) {
+    ppp = &pt->f_08_s3_mb_arr;
+    do {
+      f_800580e4_wpn_rel_fills_str(val + ii,pt);
+      sss = *ppp;
+      ii = ii + 1;
+      ppp[-2] = s1;
+      ppp[-1] = s2;
+      ppp = ppp + 0x16;
+      s1 = s1 + sss;
+      pt = pt + 1;
+    } while (ii < num);
+  }
+  return;
+}
+
+
+
+
+void f_80057e04_wpn_two_shorts(DonkSub1 *s,short s1,short s2)
+{
+  short sVar1;
+  short sVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  
+  sVar1 = s->f_00_sho1;
+  iVar4 = 0;
+  sVar2 = s->f_02_sho2;
+  if (0 < s->f_04_i) {
+    iVar5 = 0;
+    do {
+      iVar4 = iVar4 + 1;
+      iVar3 = s->f_08_i2 + iVar5;
+      *(short *)(iVar3 + 4) = *(short *)(iVar3 + 4) + (s1 - sVar1);
+      *(short *)(iVar3 + 6) = *(short *)(iVar3 + 6) + (s2 - sVar2);
+      iVar5 = iVar5 + 0x2c;
+    } while (iVar4 < s->f_04_i);
+  }
+  s->f_00_sho1 = s1;
+  s->f_02_sho2 = s2;
+  return;
+}
+
+
+
+int f_8005ed6c_mini1(char aa,int *ret)
+{
+    printf("MINI 1 %d\n", aa);
+  if (aa == '\0') {
+    if (*ret < 0) {
+      return 0;
+    }
+    *ret = *ret + -1;
+  }
+  else {
+    if (0xb < *ret) {
+      return 0;
+    }
+    *ret = *ret + 1;
+  }
+  return 1;
+}
+
+
+
+

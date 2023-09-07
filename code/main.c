@@ -25,6 +25,8 @@
 #define MulMatrix0               ( (MATRIX*(FNC*)(MATRIX*,MATRIX*,MATRIX*)) 0x800f9bc8 )
 #define GsGetTimInfo   	         ( (void(FNC*)(ulong*,GsIMAGE*)) 0x800f9cd8 )
 #define strcmp   	             ( (int(FNC*)(char*,char*)) 0x800fb018 )
+#define ApplyMatrixSV            ( (SVECTOR*(FNC*)(MATRIX*,SVECTOR*,SVECTOR*)) 0x800fb1c8 )
+#define ScaleMatrix              ( (MATRIX*(FNC*)(MATRIX*,VECTOR*)) 0x800fb228 )
 
 //-------- data
 
@@ -2851,10 +2853,92 @@ int f_800237b4_vc_drp2(VECTOR *vv,int val,VECTOR *out)
 
 int f_800290f0_apply_transp_lv(VECTOR *v1,MATRIX *mtx,VECTOR *v2)
 {
-    printf("transp !\n");
     ApplyTransposeMatrixLV(mtx,v1,v2);
     return 0;
 }
+
+
+int f_800290d0_vec_node_lv_wrap(VECTOR *vv,Node *no,VECTOR *out)
+{
+  f_800239c4_vec_node_lv(vv,no,out);
+  return 0;
+}
+
+
+
+
+
+// untested
+int f_800292ac_mtx_sv_sh(VECTOR *v1,SVECTOR *sv1,MATRIX *mt)
+{
+  int i1;
+  undefined4 ttt;
+  SVECTOR *p_sv;
+  uint uVar1;
+  VECTOR vv;
+  int loc_mtx [4];
+  short s1;
+  
+  printf("f_800292ac_mtx_sv_sh %p\n", v1);
+  
+  if ((v1 == (VECTOR *)0x0) || (sv1 == (SVECTOR *)0x0)) {
+    i1 = 1;
+  }
+  else {
+    sv1->vx = (short)v1->vx;
+    sv1->vy = (short)v1->vy;
+    sv1->vz = (short)v1->vz;
+    if (mt == (MATRIX *)0x0) {
+      loc_mtx[1] = __EvilGet4_4(&g_8010f0d0_mtx_ident);
+      loc_mtx[3] = __EvilGet12_4(&g_8010f0d0_mtx_ident);
+      loc_mtx[0] = __EvilGet0_4(&g_8010f0d0_mtx_ident) & 0xffff0000 | (uint)(ushort)((short)v1[1].vx - (short)v1->vx);
+      loc_mtx[2] = __EvilGet8_4(&g_8010f0d0_mtx_ident) & 0xffff0000 | (uint)(ushort)((short)v1[1].vy - (short)v1->vy);
+      s1 = (short)v1[1].vz - (short)v1->vz;
+    }
+    else {
+      ApplyMatrixSV(mt,sv1,sv1);
+      sv1->vx = sv1->vx + (short)mt->t[0];
+      sv1->vy = sv1->vy + (short)mt->t[1];
+      sv1->vz = sv1->vz + (short)mt->t[2];
+      vv.vx = v1[1].vx - v1->vx;
+      vv.vy = v1[1].vy - v1->vy;
+      vv.vz = v1[1].vz - v1->vz;
+      loc_mtx[0] = *(int *)mt->m;
+      loc_mtx[1] = *(int *)(mt->m + 2);
+      loc_mtx[2] = *(int *)(mt->m + 4);
+      loc_mtx[3] = *(int *)(mt->m + 6);
+      s1 = (short)*(undefined4 *)(mt->m + 8);
+      ScaleMatrix((MATRIX *)loc_mtx,&vv);
+    }
+    uVar1 = 1;
+    p_sv = sv1 + 1;
+    do {
+      ttt = *(undefined4 *)&sv1->vz;
+      *(undefined4 *)p_sv = *(undefined4 *)sv1;
+      *(undefined4 *)&p_sv->vz = ttt;
+      if ((uVar1 & 1) != 0) {
+        p_sv->vx = p_sv->vx + (short)loc_mtx[0];
+        p_sv->vy = p_sv->vy + __EvilGet2_2( &loc_mtx[1] );
+        p_sv->vz = p_sv->vz + (short)loc_mtx[3];
+      }
+      if ((uVar1 & 2) != 0) {
+        p_sv->vx = p_sv->vx + __EvilGet2_2( &loc_mtx[0] );
+        p_sv->vy = p_sv->vy + (short)loc_mtx[2];
+        p_sv->vz = p_sv->vz + __EvilGet2_2( &loc_mtx[3] );
+      }
+      if ((uVar1 & 4) != 0) {
+        p_sv->vx = p_sv->vx + (short)loc_mtx[1];
+        p_sv->vy = p_sv->vy + __EvilGet2_2( &loc_mtx[2] );
+        p_sv->vz = p_sv->vz + s1;
+      }
+      uVar1 = uVar1 + 1;
+      p_sv = p_sv + 1;
+    } while ((int)uVar1 < 8);
+    i1 = 0;
+  }
+  return i1;
+}
+
 
 
 

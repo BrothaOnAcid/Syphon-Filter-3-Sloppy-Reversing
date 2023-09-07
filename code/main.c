@@ -4,27 +4,17 @@
 
 //------ funcs
 
-
-
-
-
 #define ApplyMatrixLV   ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
-
 #define DrawSync   	    ( (void(FNC*)(int)) 0x800f4098 )
-
 #define LoadImage   	( (void(FNC*)(RECT*,void*)) 0x800f42ac )
-
 #define memset   	    ( (void*(FNC*)(void*,byte,int)) 0x800f6f00 )
-
 #define printf   	    ( (int(FNC*)(char*,...)) 0x800f6f10 )
-
 #define TransposeMatrix ( (MATRIX*(FNC*)(MATRIX*,MATRIX*)) 0x800f9134 )
 #define SquareRoot12   	( (long(FNC*)(long)) 0x800f9204 )
-
+#define rcos   	        ( (int(FNC*)(int)) 0x800f92a4 )
+#define rsin   	        ( (int(FNC*)(int)) 0x800f9344 )
 #define RotMatrixYXZ    ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x800f9938 )
-
 #define GsGetTimInfo   	( (void(FNC*)(ulong*,GsIMAGE*)) 0x800f9cd8 )
-
 #define strcmp   	    ( (int(FNC*)(char*,char*)) 0x800fb018 )
 
 //-------- data
@@ -1704,6 +1694,62 @@ int f_8001ce40_util1(uint v)
 
 
 
+int f_80022ffc_util3(int p1,int p2,int *out)
+{
+  int i1;
+  
+  *out = p1;
+  if (p2 == 0) {
+    return 1;
+  }
+  if (p1 < 0) {
+    i1 = p1 + p2;
+  }
+  else {
+    i1 = p1 - p2;
+    if (p1 < p2) goto LAB_80023028;
+  }
+  *out = i1;
+LAB_80023028:
+  i1 = *out;
+  if ((i1 < 0) || (p2 <= i1)) {
+    if (p2 == 0) {
+      trap(0x1c00);
+    }
+    if ((p2 == -1) && (i1 == -0x80000000)) {
+      trap(0x1800);
+    }
+    *out = i1 % p2;
+  }
+  return 0;
+}
+
+
+
+
+int f_80023080_sin_cos(int ang,uint *out)
+{
+  uint u1;
+  uint bb;
+  int i1;
+  
+  printf("sin-cos sht %d %08X\n", ang, out);
+  
+  u1 = rsin(ang);
+  bb = rcos(ang);
+  if (bb == 0) {
+    *out = 0;
+    i1 = 7;
+  }
+  else {
+    u1 = f_80010698_bits(u1,bb);
+    *out = u1;
+    i1 = 0;
+  }
+  return i1;
+}
+
+
 
 
 
@@ -1727,7 +1773,6 @@ int f_80023bf4_node_mtx_transp_lv(Node *nnn,MATRIX *mt)
   mt->t[2] = vv.vz;
   return 0;
 }
-
 
 
 

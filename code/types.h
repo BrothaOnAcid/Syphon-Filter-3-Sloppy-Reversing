@@ -965,3 +965,14 @@ struct Node {
     byte f_2f_b3;
 };
 
+
+
+//--------------------------- mad skillz
+
+inline ushort __EvilGet2_2(void* src)
+{
+	ushort* s = (ushort*)src;
+	return s[1];
+}
+
+

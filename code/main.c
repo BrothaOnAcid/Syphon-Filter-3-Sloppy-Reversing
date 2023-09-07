@@ -1372,11 +1372,6 @@ int f_8005ed6c_mini1(char aa,int *ret)
 }
 
 
-inline ushort __EvilGet2_2(void* src)
-{
-	ushort* s = (ushort*)src;
-	return s[1];
-}
 
 
 
@@ -2101,6 +2096,132 @@ int f_80024c34_mtx_shuffles(MATRIX *aa,MATRIX *bb,MATRIX *cc)
   return 0;
 }
 
+
+
+
+int f_80025198_node_calcz2_mtx(Node *n1,Node *n2,MATRIX *out)
+{
+  short sVar1;
+  int iVar2;
+  Node *m0;
+  MATRIX *pMVar3;
+  Node *m2;
+  MATRIX loc_mtx_ar [2];
+  
+  if (n1 == (Node *)0x0) {
+    return 0x18;
+  }
+  out->m[1] = -out->m[1];
+  out->m[5] = -out->m[5];
+  iVar2 = out->t[1];
+  out->m[3] = -out->m[3];
+  sVar1 = out->m[7];
+  out->t[1] = -iVar2;
+  out->m[7] = -sVar1;
+  m2 = n1->f_20_n1;
+  if (m2 == (Node *)0x0) {
+    if (n2 == (Node *)0x0) {
+      (n1->f_00_mtx).m[0] = out->m[0];
+      (n1->f_00_mtx).m[1] = out->m[1];
+      (n1->f_00_mtx).m[2] = out->m[2];
+      (n1->f_00_mtx).m[3] = out->m[3];
+      (n1->f_00_mtx).m[4] = out->m[4];
+      (n1->f_00_mtx).m[5] = out->m[5];
+      (n1->f_00_mtx).m[6] = out->m[6];
+      (n1->f_00_mtx).m[7] = out->m[7];
+      (n1->f_00_mtx).m[8] = out->m[8];
+    }
+    else {
+      MulMatrix0(&n2->f_00_mtx,out,&n1->f_00_mtx);
+    }
+    goto LAB_80025458;
+  }
+  m0 = m2->f_20_n1;
+  if (n2 == m0) {
+    (m2->f_00_mtx).m[0] = out->m[0];
+    (n1->f_20_n1->f_00_mtx).m[1] = out->m[1];
+    (n1->f_20_n1->f_00_mtx).m[2] = out->m[2];
+    (n1->f_20_n1->f_00_mtx).m[3] = out->m[3];
+    (n1->f_20_n1->f_00_mtx).m[4] = out->m[4];
+    (n1->f_20_n1->f_00_mtx).m[5] = out->m[5];
+    (n1->f_20_n1->f_00_mtx).m[6] = out->m[6];
+    (n1->f_20_n1->f_00_mtx).m[7] = out->m[7];
+    (n1->f_20_n1->f_00_mtx).m[8] = out->m[8];
+  }
+  else {
+    pMVar3 = out;
+    if (n2 == (Node *)0x0) {
+      if (m0 == (Node *)0x0) {
+LAB_80025334:
+        MulMatrix0(&n2->f_00_mtx,out,loc_mtx_ar + 1);
+        TransposeMatrix(&n1->f_20_n1->f_20_n1->f_00_mtx,loc_mtx_ar);
+        loc_mtx_ar[0].t[0] = (n1->f_20_n1->f_20_n1->f_00_mtx).t[0];
+        loc_mtx_ar[0].t[1] = (n1->f_20_n1->f_20_n1->f_00_mtx).t[1];
+        loc_mtx_ar[0].t[2] = (n1->f_20_n1->f_20_n1->f_00_mtx).t[2];
+        n2 = (Node *)loc_mtx_ar;
+        m2 = n1->f_20_n1;
+        pMVar3 = loc_mtx_ar + 1;
+      }
+      else {
+        TransposeMatrix(&m0->f_00_mtx,loc_mtx_ar);
+        loc_mtx_ar[0].t[0] = (n1->f_20_n1->f_20_n1->f_00_mtx).t[0];
+        loc_mtx_ar[0].t[1] = (n1->f_20_n1->f_20_n1->f_00_mtx).t[1];
+        loc_mtx_ar[0].t[2] = (n1->f_20_n1->f_20_n1->f_00_mtx).t[2];
+        n2 = (Node *)loc_mtx_ar;
+        m2 = n1->f_20_n1;
+      }
+    }
+    else if (m0 != (Node *)0x0) goto LAB_80025334;
+    MulMatrix0(&n2->f_00_mtx,pMVar3,&m2->f_00_mtx);
+  }
+  n1->f_20_n1->f_2c_b0 = 1;
+LAB_80025458:
+  out->m[1] = -out->m[1];
+  out->m[5] = -out->m[5];
+  iVar2 = out->t[1];
+  out->m[3] = -out->m[3];
+  sVar1 = out->m[7];
+  out->t[1] = -iVar2;
+  out->m[7] = -sVar1;
+  return 0;
+}
+
+
+
+
+void f_800250ac_node_yxz(Node *no,Node *nnn,VECTOR *vvv)
+{
+  MATRIX mtmt;
+  int sht [2];
+  uint sv;
+  undefined4 tt;
+  
+  memset(&sv,0,8);
+  sht[0] = vvv->vx & 0xffffU | vvv->vy << 0x10;
+  tt = vvv->vz & 0xffffU | __EvilGet2_2(&tt) << 0x10;
+  sht[1] = tt;
+  sv = sht[0];
+  RotMatrixYXZ( (SVECTOR *)sht, &mtmt );
+  f_80025198_node_calcz2_mtx(no,nnn,&mtmt);
+  return;
+}
+
+
+
+
+void f_80025070_node_again(Node *n1,VECTOR *vc)
+{
+  Node *nnn;
+  
+  if (n1->f_20_n1 == (Node *)0x0) {
+    nnn = (Node *)0x0;
+  }
+  else {
+    nnn = n1->f_20_n1->f_20_n1;
+  }
+  f_800250ac_node_yxz(n1,nnn,vc);
+  return;
+}
 
 
 

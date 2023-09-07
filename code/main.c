@@ -1507,3 +1507,11 @@ int f_80025eac_get_tim_info(ImgDerp *rrr)
 
 
 
+
+
+
+#include "init_ovl.c"
+
+
+
+

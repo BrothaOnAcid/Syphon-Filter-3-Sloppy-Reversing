@@ -3036,6 +3036,25 @@ void f_80026560_list_remove_elem(DaList *list,ListElem *myLink)
 
 
 
+void f_80026650_list_clear_maybe(DaList *lst)
+{
+  ListElem *e2;
+  ListElem *e1;
+  
+  e1 = lst->first;
+  while (e1 != (ListElem *)0x0) {
+    e2 = e1->f08_prev;
+    f_80026560_list_remove_elem(lst,e1);
+    e1 = e2;
+  }
+  lst->first = (ListElem *)0x0;
+  return;
+}
+
+
+
+
+
 
 
 #include "init_ovl.c"

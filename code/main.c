@@ -34,6 +34,13 @@
 
 
 
+
+
+
+
+
+#define g_8010b634_glo_vc3               EXTEXT(0x8010b634,VECTOR)
+
 #define g_8010f0d0_mtx_ident            EXTEXT(0x8010f0d0,MATRIX)
 
 typedef uint ARR_ANGANG[4096];
@@ -50,12 +57,6 @@ typedef int ARR_TMP1[4];
 
 
 
-typedef ListElem ARR_LISTELEMPOOL[911];
-#define g_80126708_list_elem_pool       EXTEXT(0x80126708,ARR_LISTELEMPOOL)
-
-
-
-
 
 // 0: gameplay
 // 1: briefing loading ?
@@ -68,12 +69,6 @@ typedef ListElem ARR_LISTELEMPOOL[911];
 #define g_80121b88_main_mode            EXTEXT(0x80121b88,uint)
 
 
-
-
-
-
-
-#define g_8010b634_glo_vc3              EXTEXT(0x8010b634,VECTOR)
 
 #define g_80122130_midi_speed           EXTEXT(0x80122130,uint)
 
@@ -92,6 +87,19 @@ typedef ListElem ARR_LISTELEMPOOL[911];
 #define g_8012218c_current_MID_ptr      EXTEXT(0x8012218c,HeadMID*)
 #define g_80122190_midi_u9              EXTEXT(0x80122190,int)
 #define g_801221b0_snd_rela99           EXTEXT(0x801221b0,int)
+
+
+
+#define g_80122234_hmd_re1              EXTEXT(0x80122234,short)
+
+typedef AnimPlayer ARR_ANIM_PLAYERZ[14];
+#define g_80122908_ar_anim_players      EXTEXT(0x80122908,ARR_ANIM_PLAYERZ)
+
+
+typedef ListElem ARR_LISTELEMPOOL[911];
+#define g_80126708_list_elem_pool       EXTEXT(0x80126708,ARR_LISTELEMPOOL)
+
+
 
 
 
@@ -3075,6 +3083,101 @@ void f_80026304_lists_pool_init(void)
   return;
 }
 
+
+
+
+//-----------------------
+
+
+
+void f_80016174_ap_reset_pool(void)
+{
+  int i1;
+  
+  i1 = 0x8bc;
+  do {
+    *(undefined4 *)((int)g_80122908_ar_anim_players[0].f_3c_derp1 + i1 + -0x3c) = 0;
+    i1 = i1 + -0xac;
+  } while (-1 < i1);
+  return;
+}
+
+
+AnimPlayer * f_80016198_ap_get_free(void)
+{
+  int i1;
+  int i2;
+  AnimPlayer *rr;
+  
+  i2 = 0;
+  rr = g_80122908_ar_anim_players;
+  i1 = 0;
+  do {
+    if (*(int *)((int)g_80122908_ar_anim_players[0].f_3c_derp1 + i1 + -0x3c) == 0) {
+      return rr;
+    }
+    rr = rr + 1;
+    i2 = i2 + 1;
+    i1 = i1 + 0xac;
+  } while (i2 < 0xe);
+  return (AnimPlayer *)0x0;
+}
+
+
+byte * f_80016268_ap_get_juice(AnimPlayer *ap)
+{
+  byte *b1;
+  uint u2;
+  byte *b2;
+  
+  u2 = *(uint *)(ap->f_0c_an_data_start + -4);
+  b1 = (byte *)0x0;
+  if ((u2 & 0xffff) == 0xefef) {
+    b2 = ap->f_0c_an_data_start + -(((int)u2 >> 8 & 0xff00U) + (u2 >> 0x18));
+    b1 = (byte *)0x0;
+    if (*b2 == 0xea) {
+      b1 = b2 + 4;
+    }
+  }
+  return b1;
+}
+
+
+//---------------------------
+
+
+void f_80016660_hmd_inits(HmdHead *hmd)
+{
+  byte *b1;
+  char *b2;
+  int i1;
+  int i3;
+  
+  printf("HMD initz @ %08X\n", hmd);
+  
+  i3 = 0;
+  i1 = 0;
+  b2 = hmd->f_1c_name + hmd->f_08_num_faces4 * 4 + 8;
+  if (0 < hmd->f_04_num_bones) {
+    do {
+      i3 = i3 + 1;
+      i1 = i1 + *(int *)(b2 + 8);
+      b2 = b2 + *(int *)b2;
+    } while (i3 < hmd->f_04_num_bones);
+  }
+  if (g_80122234_hmd_re1 < i1) {
+    g_80122234_hmd_re1 = (short)i1;
+  }
+  if (hmd->f_04_num_bones == 0xf) {
+    b1 = hmd->f_14_off_sht;
+    *(undefined4 *)(b1 + (int)(hmd->f_1c_name + 0x188)) = 0xffffffcd;
+    *(undefined4 *)(b1 + (int)(hmd->f_1c_name + 0x198)) = 0xfffffff6;
+    b1 = hmd->f_14_off_sht;
+    *(undefined4 *)(b1 + (int)(hmd->f_1c_name + 0x1a8)) = 0xffffffec;
+    *(undefined4 *)(b1 + (int)(hmd->f_1c_name + 0x1b8)) = 0x14;
+  }
+  return;
+}
 
 
 

@@ -22,6 +22,9 @@ typedef unsigned int uint;
 typedef long long  longlong;
 typedef unsigned long long  ulonglong;
 
+typedef struct CdlLOC CdlLOC;
+typedef struct CdlFILE CdlFILE;
+
 #define FNC
 
 #define false (0)
@@ -82,9 +85,26 @@ typedef struct GsIMAGE {
 
 
 
+struct CdlLOC {
+    byte minute;
+    byte second;
+    byte sector;
+    byte track;
+};
+
+struct CdlFILE {
+    CdlLOC pos;
+    uint size;
+    char name[16];
+};
+
+
+
+
 //--------------------------------
 
 // made up
+typedef struct HmdHead      HmdHead;
 typedef struct HeadMID      HeadMID;
 typedef struct HeadMMID     HeadMMID;
 typedef struct HeadSBNK     HeadSBNK;
@@ -102,6 +122,23 @@ typedef struct Node         Node;
 
 typedef struct ListElem     ListElem;
 typedef struct DaList       DaList;
+typedef struct AnimPlayer   AnimPlayer;
+
+
+
+struct HmdHead {
+    short f_00_unk;
+    short f_02_unk2;
+    int f_04_num_bones;
+    int f_08_num_faces4;
+    int f_0c_u1;
+    int f_10_u2;
+    byte * f_14_off_sht;
+    int f_18_u3;
+    char f_1c_name[8];
+    int f_24_un4;
+};
+
 
 
 struct BankProps {
@@ -939,6 +976,30 @@ struct DaList {
   ListElem* first;  
 };
 
+
+
+// anim playback state    sizeof 0xAC
+struct AnimPlayer
+{
+    ListElem * f_00_my_link;
+    uint f_04;
+    uint f_08;
+    byte * f_0c_an_data_start;
+    byte * f_10_an_data_cur;
+    int f_14_frame;
+    int f_18_neg;
+    void* f_1c_func;
+    uint f_20_unk;
+    byte * f_24_ptr_data_for_cb;
+    int f_28_flg;
+    int f_2c_u3;
+    int f_30_dunno;
+    int f_34_u1;
+    int f_38_u2;
+    int f_3c_derp1[18];
+    int f_84_derp2[8];
+    int f_a4_derp3[2];
+};
 
 
 //--------------------------- mad skillz

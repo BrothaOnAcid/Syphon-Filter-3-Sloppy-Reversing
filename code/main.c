@@ -50,6 +50,11 @@ typedef int ARR_TMP1[4];
 
 
 
+typedef ListElem ARR_LISTELEMPOOL[911];
+#define g_80126708_list_elem_pool    EXTEXT(0x80126708,ARR_LISTELEMPOOL)
+
+
+
 
 
 // 0: gameplay
@@ -3050,6 +3055,46 @@ void f_80026650_list_clear_maybe(DaList *lst)
   lst->first = (ListElem *)0x0;
   return;
 }
+
+
+
+
+
+void f_80026304_lists_pool_init(void)
+{
+  ListElem *p1;
+  int i;
+  ListElem *p2;
+  
+  printf("LIST POOLS INIT !\n");
+  
+  g_80121b28_list_elem_tot_cnt = 0;
+  i = 0;
+  p1 = g_80126708_list_elem_pool + 2;
+  p2 = g_80126708_list_elem_pool;
+  do {
+    if (i < 0x2a9c) {
+      *(ListElem **)((int)&g_80126708_list_elem_pool[1].f08_prev + i) = p1;
+    }
+    else {
+      *(undefined4 *)((int)&g_80126708_list_elem_pool[1].f08_prev + i) = 0;
+    }
+    if (i == 0) {
+      g_80126708_list_elem_pool[1].f04_next = (ListElem *)0x0;
+    }
+    else {
+      *(ListElem **)((int)&g_80126708_list_elem_pool[1].f04_next + i) = p2;
+    }
+    *(undefined4 *)((int)&g_80126708_list_elem_pool[1].f00_my_data + i) = 0xbadbadff;
+    i = i + 0xc;
+    p2 = p2 + 1;
+    p1 = p1 + 1;
+  } while (i < 10920);
+  g_80121b24_list_elem_free = g_80126708_list_elem_pool + 1;
+  return;
+}
+
+
 
 
 

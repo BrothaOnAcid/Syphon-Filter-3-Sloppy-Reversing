@@ -51,7 +51,7 @@ typedef int ARR_TMP1[4];
 
 
 typedef ListElem ARR_LISTELEMPOOL[911];
-#define g_80126708_list_elem_pool    EXTEXT(0x80126708,ARR_LISTELEMPOOL)
+#define g_80126708_list_elem_pool       EXTEXT(0x80126708,ARR_LISTELEMPOOL)
 
 
 
@@ -236,8 +236,6 @@ HeadSBNK * f_800ff43c_snd_bank_by_name(byte *data)
 {
   HeadSBNK *sb;
   
-  //printf("snd bank find.. for %p\n");
-  
   sb = g_80122154_snd_banks;
   if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
     do {
@@ -259,9 +257,7 @@ int f_800ff4bc_midi_inits_rec(byte *da)
   byte *b2;
   byte *pbVar1;
   int i1;
-  
-  //printf("midi inits.. %p\n", da);
-  
+
                     /* MID */
   if (*(int *)da == 0x2044494d) {
     b1 = f_800ff43c_snd_bank_by_name(*(byte **)(da + 0x10));
@@ -297,10 +293,7 @@ int f_800ff4bc_midi_inits_rec(byte *da)
 
 
 
-
-
 HeadSBNK * f_800ff47c_snd_bank_find_unk(byte by)
-
 {
   HeadSBNK *r;
   
@@ -322,7 +315,6 @@ HeadMMID * f_800ff6a4_snd_mmid_find(uint nam)
 {
   HeadMMID *mid;
   
-
   mid = g_80122158_ptr_MMID;
   if (g_80122158_ptr_MMID != (HeadMMID *)0x0) {
     do {
@@ -336,10 +328,7 @@ HeadMMID * f_800ff6a4_snd_mmid_find(uint nam)
 }
 
 
-
-
 void f_800ff184_snd_sb_big_sht(void)
-
 {
   char cVar1;
   bool bVar2;
@@ -438,7 +427,6 @@ void f_800ff184_snd_sb_big_sht(void)
 
 
 void f_800fe844_music_danger_set(int val)
-
 {
   if (0x7f < val) {
     val = 0x7f;
@@ -453,7 +441,6 @@ void f_800fe844_music_danger_set(int val)
 
 
 int f_800fe86c_music_danger_get(void)
-
 {
   return g_80122138_music_danger_timer;
 }
@@ -461,11 +448,7 @@ int f_800fe86c_music_danger_get(void)
 
 
 
-
-
-
 int f_801007e0_snd_mid4(HeadMID *mid,int aa,int bb)
-
 {
   HeadMID *mm;
   int iVar1;
@@ -2864,8 +2847,6 @@ int f_800237b4_vc_drp2(VECTOR *vv,int val,VECTOR *out)
   }
   return 0;
 }
-
-
 
 
 int f_800290f0_apply_transp_lv(VECTOR *v1,MATRIX *mtx,VECTOR *v2)

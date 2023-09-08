@@ -1450,6 +1450,33 @@ void f_8005584c_mtx_rotz_yxz(PlaStAtF4 *unk_st,VECTOR *vc)
 
 
 
+void f_80050ca8_setupz(PlaStAtF4 *st)
+{
+  uint i1;
+  
+  f_8005584c_mtx_rotz_yxz(st,(VECTOR *)0x0);
+  i1 = st->f_18_bits;
+  (st->f_234_vc2).vx = 0;
+  (st->f_234_vc2).vy = 0;
+  (st->f_234_vc2).vz = 0;
+  st->f_20c_qqq = 0;
+  st->f_2c4_ii = 0;
+  st->f_2c6_i2 = 0;
+  st->f_2c8_i3 = 0;
+  st->f_2cc_i5 = 0;
+  st->f_2ce_i8 = 0;
+  st->f_2d0_shhshh = 0;
+  st->f_2d4 = 0;
+  st->f_2d6 = 0;
+  st->f_2d8 = 0;
+  st->f_18_bits = i1 & 0xfffffff9;
+  return;
+}
+
+
+
+
+
 
 void f_800558bc_vec_u7(PlaStAtF4 *s,VECTOR *vc)
 {

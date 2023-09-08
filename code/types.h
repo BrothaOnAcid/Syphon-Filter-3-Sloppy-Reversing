@@ -52,7 +52,6 @@ typedef struct VECTOR
 } VECTOR;
 
 
-
 typedef struct MATRIX {
     short m[9];
     long t[3];
@@ -65,8 +64,6 @@ typedef struct RECT {
     short w;
     short h;
 } RECT;
-
-
 
 
 typedef struct GsIMAGE {
@@ -87,7 +84,7 @@ typedef struct GsIMAGE {
 
 //--------------------------------
 
-
+// made up
 typedef struct HeadMID      HeadMID;
 typedef struct HeadMMID     HeadMMID;
 typedef struct HeadSBNK     HeadSBNK;
@@ -95,19 +92,16 @@ typedef struct BankProps    BankProps;
 typedef struct BankTab      BankTab;
 typedef struct BankEnt      BankEnt;
 typedef struct SndChan      SndChan;
-
 typedef struct DonkSub1     DonkSub1;
 typedef struct DonkSub2C    DonkSub2C;
-
 typedef struct WpnTabS10    WpnTabS10;
-
 typedef struct PlaStAtF4    PlaStAtF4;
-
 typedef struct ImgDerp      ImgDerp;
-
-
 typedef struct StrTabHead   StrTabHead;
 typedef struct Node         Node;
+
+typedef struct ListElem     ListElem;
+typedef struct DaList       DaList;
 
 
 struct BankProps {
@@ -787,138 +781,102 @@ struct PlaStAtF4 {
     undefined field382_0x18d;
     undefined field383_0x18e;
     undefined field384_0x18f;
-    undefined field385_0x190;
-    undefined field386_0x191;
-    undefined field387_0x192;
-    undefined field388_0x193;
-    undefined field389_0x194;
-    undefined field390_0x195;
-    undefined field391_0x196;
-    undefined field392_0x197;
-    undefined field393_0x198;
-    undefined field394_0x199;
-    undefined field395_0x19a;
-    undefined field396_0x19b;
-    undefined field397_0x19c;
-    undefined field398_0x19d;
-    undefined field399_0x19e;
-    undefined field400_0x19f;
-    undefined field401_0x1a0;
-    undefined field402_0x1a1;
-    undefined field403_0x1a2;
-    undefined field404_0x1a3;
-    undefined field405_0x1a4;
-    undefined field406_0x1a5;
-    undefined field407_0x1a6;
-    undefined field408_0x1a7;
-    undefined field409_0x1a8;
-    undefined field410_0x1a9;
-    undefined field411_0x1aa;
-    undefined field412_0x1ab;
-    undefined field413_0x1ac;
-    undefined field414_0x1ad;
-    undefined field415_0x1ae;
-    undefined field416_0x1af;
-    undefined field417_0x1b0;
-    undefined field418_0x1b1;
-    undefined field419_0x1b2;
-    undefined field420_0x1b3;
-    undefined field421_0x1b4;
-    undefined field422_0x1b5;
-    undefined field423_0x1b6;
-    undefined field424_0x1b7;
-    undefined field425_0x1b8;
-    undefined field426_0x1b9;
-    undefined field427_0x1ba;
-    undefined field428_0x1bb;
-    undefined field429_0x1bc;
-    undefined field430_0x1bd;
-    undefined field431_0x1be;
-    undefined field432_0x1bf;
-    undefined field433_0x1c0;
-    undefined field434_0x1c1;
-    undefined field435_0x1c2;
-    undefined field436_0x1c3;
-    undefined field437_0x1c4;
-    undefined field438_0x1c5;
-    undefined field439_0x1c6;
-    undefined field440_0x1c7;
-    undefined field441_0x1c8;
-    undefined field442_0x1c9;
-    undefined field443_0x1ca;
-    undefined field444_0x1cb;
-    undefined field445_0x1cc;
-    undefined field446_0x1cd;
-    undefined field447_0x1ce;
-    undefined field448_0x1cf;
-    undefined field449_0x1d0;
-    undefined field450_0x1d1;
-    undefined field451_0x1d2;
-    undefined field452_0x1d3;
-    undefined field453_0x1d4;
-    undefined field454_0x1d5;
-    undefined field455_0x1d6;
-    undefined field456_0x1d7;
-    undefined field457_0x1d8;
-    undefined field458_0x1d9;
-    undefined field459_0x1da;
-    undefined field460_0x1db;
-    undefined field461_0x1dc;
-    undefined field462_0x1dd;
-    undefined field463_0x1de;
-    undefined field464_0x1df;
-    undefined field465_0x1e0;
-    undefined field466_0x1e1;
-    undefined field467_0x1e2;
-    undefined field468_0x1e3;
-    undefined field469_0x1e4;
-    undefined field470_0x1e5;
-    undefined field471_0x1e6;
-    undefined field472_0x1e7;
-    undefined field473_0x1e8;
-    undefined field474_0x1e9;
-    undefined field475_0x1ea;
-    undefined field476_0x1eb;
-    undefined field477_0x1ec;
-    undefined field478_0x1ed;
-    undefined field479_0x1ee;
-    undefined field480_0x1ef;
-    undefined field481_0x1f0;
-    undefined field482_0x1f1;
-    undefined field483_0x1f2;
-    undefined field484_0x1f3;
-    undefined field485_0x1f4;
-    undefined field486_0x1f5;
-    undefined field487_0x1f6;
-    undefined field488_0x1f7;
-    undefined field489_0x1f8;
-    undefined field490_0x1f9;
-    undefined field491_0x1fa;
-    undefined field492_0x1fb;
-    undefined field493_0x1fc;
-    undefined field494_0x1fd;
-    undefined field495_0x1fe;
-    undefined field496_0x1ff;
-    undefined field497_0x200;
-    undefined field498_0x201;
-    undefined field499_0x202;
-    undefined field500_0x203;
-    undefined field501_0x204;
-    undefined field502_0x205;
-    undefined field503_0x206;
-    undefined field504_0x207;
-    undefined field505_0x208;
-    undefined field506_0x209;
-    undefined field507_0x20a;
-    undefined field508_0x20b;
-    undefined field509_0x20c;
-    undefined field510_0x20d;
-    undefined field511_0x20e;
-    undefined field512_0x20f;
-    undefined field513_0x210;
-    undefined field514_0x211;
-    undefined field515_0x212;
-    undefined field516_0x213;
+    VECTOR f_190_v0;
+    undefined field386_0x1a0;
+    undefined field387_0x1a1;
+    undefined field388_0x1a2;
+    undefined field389_0x1a3;
+    undefined field390_0x1a4;
+    undefined field391_0x1a5;
+    undefined field392_0x1a6;
+    undefined field393_0x1a7;
+    undefined field394_0x1a8;
+    undefined field395_0x1a9;
+    undefined field396_0x1aa;
+    undefined field397_0x1ab;
+    undefined field398_0x1ac;
+    undefined field399_0x1ad;
+    undefined field400_0x1ae;
+    undefined field401_0x1af;
+    undefined field402_0x1b0;
+    undefined field403_0x1b1;
+    undefined field404_0x1b2;
+    undefined field405_0x1b3;
+    int f_1b4_va;
+    int f_1b8_vb;
+    VECTOR f_1bc_v2;
+    undefined field409_0x1cc;
+    undefined field410_0x1cd;
+    undefined field411_0x1ce;
+    undefined field412_0x1cf;
+    undefined field413_0x1d0;
+    undefined field414_0x1d1;
+    undefined field415_0x1d2;
+    undefined field416_0x1d3;
+    undefined field417_0x1d4;
+    undefined field418_0x1d5;
+    undefined field419_0x1d6;
+    undefined field420_0x1d7;
+    undefined field421_0x1d8;
+    undefined field422_0x1d9;
+    undefined field423_0x1da;
+    undefined field424_0x1db;
+    undefined field425_0x1dc;
+    undefined field426_0x1dd;
+    undefined field427_0x1de;
+    undefined field428_0x1df;
+    undefined field429_0x1e0;
+    undefined field430_0x1e1;
+    undefined field431_0x1e2;
+    undefined field432_0x1e3;
+    undefined field433_0x1e4;
+    undefined field434_0x1e5;
+    undefined field435_0x1e6;
+    undefined field436_0x1e7;
+    undefined field437_0x1e8;
+    undefined field438_0x1e9;
+    undefined field439_0x1ea;
+    undefined field440_0x1eb;
+    undefined field441_0x1ec;
+    undefined field442_0x1ed;
+    undefined field443_0x1ee;
+    undefined field444_0x1ef;
+    undefined field445_0x1f0;
+    undefined field446_0x1f1;
+    undefined field447_0x1f2;
+    undefined field448_0x1f3;
+    undefined field449_0x1f4;
+    undefined field450_0x1f5;
+    undefined field451_0x1f6;
+    undefined field452_0x1f7;
+    undefined field453_0x1f8;
+    undefined field454_0x1f9;
+    undefined field455_0x1fa;
+    undefined field456_0x1fb;
+    undefined field457_0x1fc;
+    undefined field458_0x1fd;
+    undefined field459_0x1fe;
+    undefined field460_0x1ff;
+    undefined field461_0x200;
+    undefined field462_0x201;
+    undefined field463_0x202;
+    undefined field464_0x203;
+    undefined field465_0x204;
+    undefined field466_0x205;
+    undefined field467_0x206;
+    undefined field468_0x207;
+    undefined field469_0x208;
+    undefined field470_0x209;
+    undefined field471_0x20a;
+    undefined field472_0x20b;
+    undefined field473_0x20c;
+    undefined field474_0x20d;
+    undefined field475_0x20e;
+    undefined field476_0x20f;
+    undefined field477_0x210;
+    undefined field478_0x211;
+    undefined field479_0x212;
+    undefined field480_0x213;
     int f_214_i;
     int f_218_i3;
     int f_21c_i2;
@@ -926,6 +884,8 @@ struct PlaStAtF4 {
     VECTOR f_224_vc;
     VECTOR f_234_vc2;
 };
+
+
 
 
 
@@ -945,7 +905,6 @@ struct ImgDerp {
 };
 
 
-
 struct StrTabHead {
     byte * ptr_dun;
     int bb;
@@ -954,15 +913,30 @@ struct StrTabHead {
 };
 
 
+// 0x24 / 0x30 ?
 struct Node {
     MATRIX f_00_mtx;
     Node * f_20_n1;
     Node * f_24_n2;
-    Node * f_24_n3;
+    Node * f_24_n3; // oops
     byte f_2c_b0;
     byte f_2d_b1;
     byte f_2e_b2;
     byte f_2f_b3;
+};
+
+
+// not sure
+struct ListElem {
+    void * f00_my_data;
+    ListElem * f04_next;
+    ListElem * f08_prev;
+};
+
+// not sure
+struct DaList {
+  
+  ListElem* first;  
 };
 
 

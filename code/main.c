@@ -44,6 +44,14 @@ typedef int ARR_TMP1[4];
 
 
 
+
+#define g_80121b24_list_elem_free       EXTEXT(0x80121b24,ListElem*)
+#define g_80121b28_list_elem_tot_cnt    EXTEXT(0x80121b28,short)
+
+
+
+
+
 // 0: gameplay
 // 1: briefing loading ?
 // 3: fmv ?
@@ -53,6 +61,10 @@ typedef int ARR_TMP1[4];
 // 8: briefing ready ?
 // 9: transition to pause-menu ?
 #define g_80121b88_main_mode            EXTEXT(0x80121b88,uint)
+
+
+
+
 
 
 
@@ -2939,6 +2951,86 @@ int f_800292ac_mtx_sv_sh(VECTOR *v1,SVECTOR *sv1,MATRIX *mt)
   return i1;
 }
 
+
+
+
+
+//---------------------------------------------------------
+
+ListElem * f_80026460_list_add(DaList *list,void *ee)
+{
+  ListElem *e2;
+  ListElem *e1;
+  
+  e1 = g_80121b24_list_elem_free;
+  e2 = (ListElem *)0x0;
+  if (g_80121b24_list_elem_free != (ListElem *)0x0) {
+    g_80121b24_list_elem_free = g_80121b24_list_elem_free->f08_prev;
+    g_80121b24_list_elem_free->f04_next = (ListElem *)0x0;
+    e1->f00_my_data = ee;
+    e2 = list->first;
+    e1->f04_next = (ListElem *)0x0;
+    e1->f08_prev = e2;
+    if (list->first != (ListElem *)0x0) {
+      list->first->f04_next = e1;
+    }
+    list->first = e1;
+    g_80121b28_list_elem_tot_cnt = g_80121b28_list_elem_tot_cnt + 1;
+    e2 = list->first;
+  }
+  return e2;
+}
+
+
+ListElem * f_800263a8_list_search(DaList *list,ListElem *link,void *data)
+{
+  ListElem *x1;
+  ListElem *e;
+  
+  e = list->first;
+  while (((x1 = (ListElem *)0x0, e != (ListElem *)0x0 && (x1 = e, e != link)) &&
+         (e->f00_my_data != data))) {
+    e = e->f08_prev;
+  }
+  return x1;
+}
+
+
+
+
+void f_80026560_list_remove_elem(DaList *list,ListElem *myLink)
+{
+  ListElem *p1;
+  ListElem *p2;
+  ListElem **tmp;
+  
+  if ((((myLink != (ListElem *)0x0) && (list->first != (ListElem *)0x0)) &&
+      ((uint)myLink >> 0x18 == 0x80)) &&
+     (((0xffff < ((uint)myLink & 0xffffff) && (myLink < (ListElem *)(0x801ff001))) &&
+      (((uint)myLink & 3) == 0)))) {
+    p2 = myLink->f08_prev;
+    p1 = f_800263a8_list_search(list,myLink,(void *)0x0);
+    if (p1 != (ListElem *)0x0) {
+      if (myLink->f04_next == (ListElem *)0x0) {
+        list->first = p2;
+      }
+      else {
+        myLink->f04_next->f08_prev = myLink->f08_prev;
+      }
+      if (p2 != (ListElem *)0x0) {
+        p2->f04_next = myLink->f04_next;
+      }
+      p1 = g_80121b24_list_elem_free;
+      g_80121b28_list_elem_tot_cnt = g_80121b28_list_elem_tot_cnt + -1;
+      tmp = &g_80121b24_list_elem_free->f04_next;
+      g_80121b24_list_elem_free = myLink;
+      *tmp = myLink;
+      myLink->f04_next = (ListElem *)0x0;
+      myLink->f08_prev = p1;
+    }
+  }
+  return;
+}
 
 
 

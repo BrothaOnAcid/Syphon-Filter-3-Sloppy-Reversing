@@ -3,6 +3,21 @@
 
 
 
+int f_init_ovl_8016c164_img_find_stuff(StrTabHead *unun,char *nam,ImgDerp *imm)
+{
+  int i1;
+  uint u2;
+  
+  i1 = f_800277ac_str_tab_search(unun,nam,(int *)imm);
+  u2 = (uint)(i1 == 0);
+  if ((u2 == 1) && (i1 = f_80025eac_get_tim_info(imm), i1 != 0)) {
+    u2 = 0;
+  }
+  return u2;
+}
+
+
+
 void f_init_ovl_8016c1c4_fill_wpn_ics(ImgDerp *im,int ii)
 {
   uint u3;
@@ -25,4 +40,14 @@ void f_init_ovl_8016c1c4_fill_wpn_ics(ImgDerp *im,int ii)
   g_80132084_wpn_icons_tab[ii].f_e_sh3 = (im->f_0c_gs_img).cy;
   return;
 }
+
+
+
+
+int f_init_ovl_80161924_get_val_const(void)
+{
+  return 392;
+}
+
+
 

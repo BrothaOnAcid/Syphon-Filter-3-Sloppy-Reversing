@@ -3238,8 +3238,6 @@ void f_80012f24_clear_screen(void)
   RECT rc;
   short hmm [4];
   
-  printf("clear screen !\n");
-  
   f_80021f88_get_screen_info(hmm,hmm + 1);
   rc.y = 0;
   rc.x = 0;
@@ -3250,6 +3248,30 @@ void f_80012f24_clear_screen(void)
   return;
 }
 
+
+// ret value affects FOV
+int f_8001587c_screen_related(int val,uint *ret)
+{
+  int iVar1;
+  uint uVar2;
+  short hmm [4];
+  
+  if (val < 0x800) {
+    f_80021f88_get_screen_info(hmm,hmm + 1);
+    iVar1 = f_80023080_sin_cos(val / 2,(uint *)(hmm + 2));
+    if (iVar1 == 0) {
+      uVar2 = f_80010698_bits(((int)((uint)(ushort)hmm[0] << 0x10) >> 0x10) -
+                              ((int)((uint)(ushort)hmm[0] << 0x10) >> 0x1f) >> 1,  __EvilGet4_4(&hmm[0])  );
+      *ret = uVar2;
+      
+      iVar1 = 0;
+    }
+  }
+  else {
+    iVar1 = 1;
+  }
+  return iVar1;
+}
 
 
 

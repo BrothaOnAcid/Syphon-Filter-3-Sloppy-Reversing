@@ -9,8 +9,12 @@
 
 
 
+
+
+
 #define ApplyMatrixLV            ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
 #define DrawSync   	             ( (void(FNC*)(int)) 0x800f4098 )
+#define ClearImage   	         ( (void(FNC*)(RECT*,uint,uint,uint)) 0x800f421c )
 #define LoadImage   	         ( (void(FNC*)(RECT*,void*)) 0x800f42ac )
 #define memset   	             ( (void*(FNC*)(void*,byte,int)) 0x800f6f00 )
 #define printf   	             ( (int(FNC*)(char*,...)) 0x800f6f10 )
@@ -58,6 +62,9 @@ typedef int ARR_TMP1[4];
 
 
 
+
+
+
 // 0: gameplay
 // 1: briefing loading ?
 // 3: fmv ?
@@ -91,6 +98,10 @@ typedef int ARR_TMP1[4];
 
 
 #define g_80122234_hmd_re1              EXTEXT(0x80122234,short)
+
+#define g_8012225a_scr_w                EXTEXT(0x8012225a,short)
+#define g_8012225c_scr_h                EXTEXT(0x8012225c,short)
+
 
 typedef AnimPlayer ARR_ANIM_PLAYERZ[14];
 #define g_80122908_ar_anim_players      EXTEXT(0x80122908,ARR_ANIM_PLAYERZ)
@@ -2662,6 +2673,36 @@ int f_800231bc_vec_sqsq(VECTOR *v0,int *out)
 
 
 
+int f_80011484_vecs_two_xz(VECTOR *aa,VECTOR *bb)
+{
+  int q1;
+  int q2;
+  int q3;
+  int q4;
+  
+  q4 = aa->vx - bb->vx;
+  if (q4 < 0) {
+    q4 = bb->vx - aa->vx;
+  }
+  q1 = aa->vz - bb->vz;
+  if (q1 < 0) {
+    q1 = bb->vz - aa->vz;
+  }
+  q2 = q4 + q1;
+  q3 = q4 - q1;
+  if (q3 < 0) {
+    q3 = q1 - q4;
+  }
+  if (q3 < q2 >> 1) {
+    q2 = q2 - (q2 >> 2);
+  }
+  else if (q3 <= (q2 >> 1) + (q2 >> 2)) {
+    q2 = q2 - (q2 >> 3);
+  }
+  return q2;
+}
+
+
 
 int f_80027c44_vcs(VECTOR *vvv,VECTOR *vc2,int *out)
 {
@@ -3176,6 +3217,36 @@ void f_80016660_hmd_inits(HmdHead *hmd)
     *(undefined4 *)(b1 + (int)(hmd->f_1c_name + 0x1a8)) = 0xffffffec;
     *(undefined4 *)(b1 + (int)(hmd->f_1c_name + 0x1b8)) = 0x14;
   }
+  return;
+}
+
+
+
+
+
+int f_80021f88_get_screen_info(short *out_w,short *out_h)
+{
+  *out_w = g_8012225a_scr_w;
+  *out_h = g_8012225c_scr_h;
+  return 0;
+}
+
+
+
+void f_80012f24_clear_screen(void)
+{
+  RECT rc;
+  short hmm [4];
+  
+  printf("clear screen !\n");
+  
+  f_80021f88_get_screen_info(hmm,hmm + 1);
+  rc.y = 0;
+  rc.x = 0;
+  rc.h = hmm[1] << 1;
+  rc.w = hmm[0];
+  ClearImage(&rc,0,0,0);
+  DrawSync(0);
   return;
 }
 

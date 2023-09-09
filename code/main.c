@@ -3889,8 +3889,6 @@ int f_8001c0b0_hmd_setups(HmdHead *hmd,MaybeMd78 *ss)
   int iVar9;
   int iVar2;
   
-  printf("HMD setups %p %p\n", hmd, ss);
-  
   iVar4 = 100000;
   iVar5 = -100000;
   iVar2 = -4;
@@ -3931,6 +3929,90 @@ int f_8001c0b0_hmd_setups(HmdHead *hmd,MaybeMd78 *ss)
   return 0;
 }
 
+
+
+
+int f_800182f4_model_setup(MaybeMd78 *ss,byte *data)
+{
+  if ((ss->f_28_fla & 0x4000000) == 0) {
+    if ((ss->f_28_fla & 0x1000000) != 0) {
+      f_8001c0b0_hmd_setups((HmdHead *)data,ss);
+    }
+  }
+  else {
+      // other mdl type ? union ?
+    ss->f_00 = (int)*(short *)(data + 10);
+    ss->f_04 = (int)*(short *)(data + 0xc);
+    ss->f_08 = (int)*(short *)(data + 0xe);
+    ss->f_10 = (int)*(short *)(data + 0x10);
+    ss->f_14 = (int)*(short *)(data + 0x12);
+    ss->f_18 = (int)*(short *)(data + 0x14);
+  }
+  return 0;
+}
+
+
+
+
+
+void f_80018384_ed_wraps_mdl_setup(EntData1C *dd)
+{
+    printf("f_80018384_ed_wraps_mdl_setup %p\n", dd);
+    
+  dd->f_0a_u1 = dd->f_0a_u1 | 4;
+  f_800182f4_model_setup(dd->f_10_ptr_md,dd->f_10_ptr_md->f_24_ptpt);
+  return;
+}
+
+
+
+
+void f_800183b8_ed_md_set_hmd(EntData1C *dd)
+{
+    printf("xxxx hmd %p\n", dd);
+  dd->f_0a_u1 = dd->f_0a_u1 & 0xfb;
+  f_800182f4_model_setup(dd->f_10_ptr_md,(byte *)dd->f_10_ptr_md->f_20_ptr_hmd);
+  return;
+}
+
+
+
+
+
+int f_800247a4_node_cr_root(XfSht *xf)
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  long lVar3;
+  Node *n1;
+  int rr;
+  
+  //printf("hey ! %p\n", xf);
+  
+  n1 = (Node *)f_80026274_heap_alloc(0x24);
+  xf->nodes = n1;
+  uVar2 =   __EvilGet8_4( &g_8010f0d0_mtx_ident );
+  uVar1 =   __EvilGet4_4( &g_8010f0d0_mtx_ident );
+  if (n1 == (Node *)0x0) {
+    rr = 3;
+  }
+  else {
+    *(undefined4 *)(n1->f_00_mtx).m = __EvilGet0_4( &g_8010f0d0_mtx_ident );
+    *(undefined4 *)((n1->f_00_mtx).m + 2) = uVar1;
+    *(undefined4 *)((n1->f_00_mtx).m + 4) = uVar2;
+    lVar3 = g_8010f0d0_mtx_ident.t[0];
+    uVar1 = __EvilGet16_4( &g_8010f0d0_mtx_ident );
+    *(undefined4 *)((n1->f_00_mtx).m + 6) = __EvilGet12_4( &g_8010f0d0_mtx_ident );
+    *(undefined4 *)((n1->f_00_mtx).m + 8) = uVar1;
+    (n1->f_00_mtx).t[0] = lVar3;
+    lVar3 = g_8010f0d0_mtx_ident.t[2];
+    (n1->f_00_mtx).t[1] = g_8010f0d0_mtx_ident.t[1];
+    (n1->f_00_mtx).t[2] = lVar3;
+    rr = 0;
+    xf->nodes->f_20_n1 = (Node *)0x0;
+  }
+  return rr;
+}
 
 
 

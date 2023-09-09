@@ -1082,7 +1082,7 @@ struct MaybeMd78 {
     int f_18;
     int f_1c;
     HmdHead * f_20_ptr_hmd;
-    int f_24_unk;
+    byte* f_24_ptpt;
     uint f_28_fla;
     int * f_2c_p_un;
     undefined field12_0x30;

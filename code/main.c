@@ -7,7 +7,7 @@
 
 
 
-
+#define f_800fc774_sbank_dunno   ( (void(FNC*)(HeadSBNK*,int)) 0x800fc774 )
 
 #define ratan2   	             ( (int(FNC*)(int,int)) 0x800f2fc0 )
 #define ApplyMatrixLV            ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
@@ -85,6 +85,7 @@ typedef int ARR_TMP1[4];
 #define g_80122150_snd_val2             EXTEXT(0x80122150,int)
 #define g_80122154_snd_banks            EXTEXT(0x80122154,HeadSBNK*)
 #define g_80122158_ptr_MMID             EXTEXT(0x80122158,HeadMMID*)
+#define g_8012215c_iv5                  EXTEXT(0x8012215c,int)
 
 #define g_80122168_voice_env_req        EXTEXT(0x80122168,int)
 
@@ -160,12 +161,91 @@ void f_800fffec_snd_spu_key(void)
   if (g_8012217c_snd_mask2 != 0) {
     SpuSetKey(0,g_8012217c_snd_mask2);
     
-    printf("spu key.. %08X\n", g_8012217c_snd_mask2);
-    
     uVar1 = g_8012217c_snd_mask2;
     g_8012217c_snd_mask2 = 0;
     g_80122180_snd_msk4 = g_80122180_snd_msk4 & ~uVar1;
     g_80122184_snd_msk3 = g_80122184_snd_msk3 | uVar1;
+  }
+  return;
+}
+
+
+
+
+void f_800ff758_snd_mmid2(HeadMMID *m)
+{
+  BankEnt *ba;
+  int ii;
+  HeadSBNK *sb;
+  int i2;
+  
+  printf("mmid2 help.. %p\n", m);
+  
+  sb = g_80122154_snd_banks;
+  if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
+    do {
+      ii = 0;
+      if (0 < sb->f_18_s) {
+        i2 = 0;
+        do {
+          ba = sb->f_20_ents;
+          if (*(HeadMMID **)((int)&ba->f_1c_ptr_mmid + i2) == m) {
+            f_800fc774_sbank_dunno(sb,ii);
+            *(undefined4 *)((int)&ba->f_1c_ptr_mmid + i2) = 0;
+          }
+          ii = ii + 1;
+          i2 = i2 + 0x24;
+        } while (ii < sb->f_18_s);
+      }
+      sb = sb->f_14_ptr_sb;
+    } while (sb != (HeadSBNK *)0x0);
+  }
+  return;
+}
+
+
+
+
+
+void f_800ff5a8_snd_mmid_recs(byte *data)
+{
+  HeadMID *m1;
+  HeadMID *m2;
+  byte *b;
+  int ii;
+  
+  printf("snd mmid recs %p\n", data);
+  
+  if (g_8012215c_iv5 == 0) {
+    f_800ff758_snd_mmid2((HeadMMID *)data);
+  }
+                    /* MMID */
+  if (*(int *)data == 0x44494d4d) {
+    ii = 0;
+    g_8012215c_iv5 = 1;
+    b = data;
+    if (data[7] != 0) {
+      do {
+        f_800ff5a8_snd_mmid_recs(*(byte **)(b + 0x10));
+        ii = ii + 1;
+        b = b + 4;
+      } while (ii < (int)(uint)data[7]);
+    }
+    g_8012215c_iv5 = 0;
+  }
+  if (g_80122158_ptr_MMID != (HeadMMID *)0x0) {
+    if (g_80122158_ptr_MMID == (HeadMMID *)data) {
+      g_80122158_ptr_MMID = *(HeadMMID **)(data + 0xc);
+    }
+    else {
+      m1 = g_80122158_ptr_MMID->f_0c_ar_mid[0];
+      m2 = (HeadMID *)g_80122158_ptr_MMID;
+      while (m1 != (HeadMID *)data) {
+        m2 = m2->f_0c_next;
+        m1 = m2->f_0c_next;
+      }
+      m2->f_0c_next = *(HeadMID **)(data + 0xc);
+    }
   }
   return;
 }
@@ -1074,6 +1154,22 @@ void f_8009f5ac_mtx_shuff4(MATRIX *m)
   m->m[8] = -sVar6;
   return;
 }
+
+
+
+void f_80100038_sndchan_destroy(int i)
+{
+  PFN_CHAN ff;
+  
+  SpuSetKey(0,1 << (i & 0x1fU));
+  ff = g_80145ac0_chans[i].f44_ptr_code;
+  g_80145ac0_chans[i].f00_first = 0;
+  if (ff) {
+    (*ff)(i,g_80145ac0_chans[i].f_40_my_mid,4);
+  }
+  return;
+}
+
 
 
 

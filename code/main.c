@@ -9,8 +9,6 @@
 
 
 
-
-
 #define ratan2   	             ( (int(FNC*)(int,int)) 0x800f2fc0 )
 #define ApplyMatrixLV            ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
 #define DrawSync   	             ( (void(FNC*)(int)) 0x800f4098 )
@@ -31,12 +29,10 @@
 #define strcmp   	             ( (int(FNC*)(char*,char*)) 0x800fb018 )
 #define ApplyMatrixSV            ( (SVECTOR*(FNC*)(MATRIX*,SVECTOR*,SVECTOR*)) 0x800fb1c8 )
 #define ScaleMatrix              ( (MATRIX*(FNC*)(MATRIX*,VECTOR*)) 0x800fb228 )
+#define SpuSetKey   	         ( (void(FNC*)(int,uint)) 0x801087d0 )
+
 
 //-------- data
-
-
-
-
 
 
 
@@ -77,10 +73,16 @@ typedef int ARR_TMP1[4];
 
 
 
+
+
+
+
 #define g_80122130_midi_speed           EXTEXT(0x80122130,uint)
 
 #define g_80122138_music_danger_timer   EXTEXT(0x80122138,int)
 
+#define g_8012214c_snd_val1             EXTEXT(0x8012214c,int)
+#define g_80122150_snd_val2             EXTEXT(0x80122150,int)
 #define g_80122154_snd_banks            EXTEXT(0x80122154,HeadSBNK*)
 #define g_80122158_ptr_MMID             EXTEXT(0x80122158,HeadMMID*)
 
@@ -88,8 +90,10 @@ typedef int ARR_TMP1[4];
 
 #define g_80122178_snd_some_mask        EXTEXT(0x80122178,uint)
 #define g_8012217c_snd_mask2            EXTEXT(0x8012217c,uint)
-
+#define g_80122180_snd_msk4             EXTEXT(0x80122180,uint)
 #define g_80122184_snd_msk3             EXTEXT(0x80122184,uint)
+
+
 
 #define g_8012218c_current_MID_ptr      EXTEXT(0x8012218c,HeadMID*)
 #define g_80122190_midi_u9              EXTEXT(0x80122190,int)
@@ -134,6 +138,40 @@ void trap(ushort v)
 }
 
 //-------------------------------
+
+void f_800feeb8_snd_reset2(void)
+{
+    printf("snd reset2 !\n");
+    
+  g_8012214c_snd_val1 = 0;
+  g_80122150_snd_val2 = 0;
+  g_80122154_snd_banks = (HeadSBNK *)0x0;
+  g_80122158_ptr_MMID = (HeadMMID *)0x0;
+  return;
+}
+
+
+
+
+void f_800fffec_snd_spu_key(void)
+{
+  uint uVar1;
+  
+  if (g_8012217c_snd_mask2 != 0) {
+    SpuSetKey(0,g_8012217c_snd_mask2);
+    
+    printf("spu key.. %08X\n", g_8012217c_snd_mask2);
+    
+    uVar1 = g_8012217c_snd_mask2;
+    g_8012217c_snd_mask2 = 0;
+    g_80122180_snd_msk4 = g_80122180_snd_msk4 & ~uVar1;
+    g_80122184_snd_msk3 = g_80122184_snd_msk3 | uVar1;
+  }
+  return;
+}
+
+
+
 
 uint f_80101244_midi_juice_stuff(byte *midiJuice,int *out)
 
@@ -848,6 +886,17 @@ int f_800281a4_ratan_wrp(VECTOR *vv,int *ou)
   return 0;
 }
 
+
+int f_800282ec_xz_ratan(VECTOR *vv,VECTOR *out)
+{
+  int i1;
+  
+  i1 = ratan2(vv->vx,vv->vz);
+  out->vy = i1;
+  f_800280dc_ratan_stuff(vv,&out->vx);
+  out->vz = 0;
+  return 0;
+}
 
 
 
@@ -3017,8 +3066,6 @@ int f_800281e4_mtx_calcz99(MATRIX *m1,VECTOR *out_vc)
   VECTOR v1;
   VECTOR v2;
   VECTOR qqq;
-  
-  printf("calcz 99  %p %p\n", m1, out_vc);
   
   v0.vx = (long)m1->m[0];
   v0.vy = (long)m1->m[3];

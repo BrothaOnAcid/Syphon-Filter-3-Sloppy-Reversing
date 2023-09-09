@@ -1064,6 +1064,127 @@ struct AnimPlayer
 };
 
 
+
+typedef struct MaybeMd78    MaybeMd78;
+typedef struct XfSht        XfSht;
+typedef struct EntData1C    EntData1C;
+
+
+// model instance ?
+
+struct MaybeMd78 {
+    int f_00;
+    int f_04;
+    int f_08;
+    int f_0c;
+    int f_10;
+    int f_14;
+    int f_18;
+    int f_1c;
+    HmdHead * f_20_ptr_hmd;
+    int f_24_unk;
+    uint f_28_fla;
+    int * f_2c_p_un;
+    undefined field12_0x30;
+    undefined field13_0x31;
+    undefined field14_0x32;
+    undefined field15_0x33;
+    undefined field16_0x34;
+    undefined field17_0x35;
+    undefined field18_0x36;
+    undefined field19_0x37;
+    undefined field20_0x38;
+    undefined field21_0x39;
+    undefined field22_0x3a;
+    undefined field23_0x3b;
+    undefined field24_0x3c;
+    undefined field25_0x3d;
+    undefined field26_0x3e;
+    undefined field27_0x3f;
+    undefined field28_0x40;
+    undefined field29_0x41;
+    undefined field30_0x42;
+    undefined field31_0x43;
+    undefined field32_0x44;
+    undefined field33_0x45;
+    undefined field34_0x46;
+    undefined field35_0x47;
+    undefined field36_0x48;
+    undefined field37_0x49;
+    undefined field38_0x4a;
+    undefined field39_0x4b;
+    undefined field40_0x4c;
+    undefined field41_0x4d;
+    undefined field42_0x4e;
+    undefined field43_0x4f;
+    undefined field44_0x50;
+    undefined field45_0x51;
+    undefined field46_0x52;
+    undefined field47_0x53;
+    undefined field48_0x54;
+    undefined field49_0x55;
+    undefined field50_0x56;
+    undefined field51_0x57;
+    undefined field52_0x58;
+    undefined field53_0x59;
+    undefined field54_0x5a;
+    undefined field55_0x5b;
+    undefined field56_0x5c;
+    undefined field57_0x5d;
+    undefined field58_0x5e;
+    undefined field59_0x5f;
+    undefined field60_0x60;
+    undefined field61_0x61;
+    undefined field62_0x62;
+    undefined field63_0x63;
+    undefined field64_0x64;
+    undefined field65_0x65;
+    undefined field66_0x66;
+    undefined field67_0x67;
+    undefined field68_0x68;
+    undefined field69_0x69;
+    undefined field70_0x6a;
+    undefined field71_0x6b;
+    undefined field72_0x6c;
+    undefined field73_0x6d;
+    undefined field74_0x6e;
+    undefined field75_0x6f;
+    undefined field76_0x70;
+    undefined field77_0x71;
+    undefined field78_0x72;
+    undefined field79_0x73;
+    int f_74_int;
+};
+
+
+
+// not sure
+struct XfSht {
+    Node * nodes;
+};
+
+
+
+
+
+// entity related
+struct EntData1C
+{
+    ListElem * f_00_my_link;
+    byte f_04_dun_se;
+    byte f_05_bb;
+    byte f_06_cc;
+    byte f_07_d;
+    ushort f_08_fla;
+    byte f_0a_u1;
+    byte f_0b_u2;
+    XfSht f_0c_nodes;
+    MaybeMd78 * f_10_ptr_md;
+    uint f_14_flfl;
+    Node * * f_18_ptr_arr_nodes;
+};
+
+
 //--------------------------- mad skillz
 
 inline ushort __EvilGet2_2(void* src)

@@ -10,6 +10,11 @@
 #define f_800fc774_sbank_dunno   ( (void(FNC*)(HeadSBNK*,int)) 0x800fc774 )
 #define f_801078a4_spu_voice_env ( (int(FNC*)(void)) 0x801078a4 )
 
+
+#define f_80026274_heap_alloc    ( (byte*(FNC*)(int)) 0x80026274 )
+
+
+
 #define ratan2   	             ( (int(FNC*)(int,int)) 0x800f2fc0 )
 #define ApplyMatrixLV            ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
 #define DrawSync   	             ( (void(FNC*)(int)) 0x800f4098 )
@@ -57,10 +62,13 @@ typedef int ARR_TMP1[4];
 #define g_8011fcb0_ar_vol_sht           EXTEXT(0x8011fcb0,ARR_TMP1)
 
 
+#define g_8012197c_list_of_1Cs          EXTEXT(0x8012197c,DaList)
 
 
 #define g_80121b24_list_elem_free       EXTEXT(0x80121b24,ListElem*)
 #define g_80121b28_list_elem_tot_cnt    EXTEXT(0x80121b28,short)
+
+
 
 
 
@@ -3822,6 +3830,108 @@ int f_8001587c_screen_related(int val,uint *ret)
   }
   return iVar1;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EntData1C * f_80016e68_allocates_1C(MaybeMd78 *m,uint ff,byte bb,Node **ptr_arr_of_nodes,uint val)
+{
+  EntData1C *ee;
+  ListElem *link;
+  
+  printf("allocates 1c.... %p\n", m);
+  
+  ee = (EntData1C *)f_80026274_heap_alloc(0x1c);
+  ee->f_05_bb = 0x10;
+  ee->f_10_ptr_md = m;
+  ee->f_14_flfl = ff;
+  ee->f_04_dun_se = bb;
+  ee->f_06_cc = 0x40;
+  if ((int)val < 0) {
+    ee->f_08_fla = 0;
+  }
+  else {
+    ee->f_08_fla = (ushort)val;
+  }
+  ee->f_18_ptr_arr_nodes = ptr_arr_of_nodes;
+  (ee->f_0c_nodes).nodes = 0x0;
+  link = f_80026460_list_add( &g_8012197c_list_of_1Cs,ee );
+  ee->f_00_my_link = link;
+  return ee;
+}
+
+
+
+
+
+
+int f_8001c0b0_hmd_setups(HmdHead *hmd,MaybeMd78 *ss)
+{
+  int iVar1;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  int iVar6;
+  int iVar7;
+  int iVar8;
+  int iVar9;
+  int iVar2;
+  
+  printf("HMD setups %p %p\n", hmd, ss);
+  
+  iVar4 = 100000;
+  iVar5 = -100000;
+  iVar2 = -4;
+  iVar6 = iVar4;
+  iVar7 = iVar5;
+  iVar8 = iVar4;
+  iVar9 = iVar5;
+  while( true ) {
+    iVar1 = iVar2 + 4;
+    iVar3 = *(int *)(hmd->f_1c_name + iVar2 + -0x14);
+    if (iVar3 == -1) break;
+    if (*(short *)(iVar3 + 8) - iVar4 < 0) {
+      iVar4 = (int)*(short *)(iVar3 + 8);
+    }
+    if (*(short *)(iVar3 + 10) - iVar6 < 0) {
+      iVar6 = (int)*(short *)(iVar3 + 10);
+    }
+    if (0 < *(short *)(iVar3 + 0xc) - iVar5) {
+      iVar5 = (int)*(short *)(iVar3 + 0xc);
+    }
+    if (0 < *(short *)(iVar3 + 0xe) - iVar7) {
+      iVar7 = (int)*(short *)(iVar3 + 0xe);
+    }
+    if (*(short *)(iVar3 + 0x10) - iVar8 < 0) {
+      iVar8 = (int)*(short *)(iVar3 + 0x10);
+    }
+    iVar2 = iVar1;
+    if (0 < *(short *)(iVar3 + 0x12) - iVar9) {
+      iVar9 = (int)*(short *)(iVar3 + 0x12);
+    }
+  }
+  ss->f_00 = iVar4;
+  ss->f_04 = iVar8;
+  ss->f_08 = iVar6;
+  ss->f_10 = iVar5;
+  ss->f_14 = iVar9;
+  ss->f_18 = iVar7;
+  return 0;
+}
+
+
 
 
 

@@ -3751,6 +3751,76 @@ byte * f_80016268_ap_get_juice(AnimPlayer *ap)
 }
 
 
+
+AnimPlayer * f_800161e0_ap_find(EntData1C *dd,int val)
+
+{
+  AnimPlayer *a1;
+  AnimPlayer *a2;
+  
+  a1 = (AnimPlayer *)(dd->f_20_list_ap).first;
+  while (((a2 = (AnimPlayer *)0x0, a1 != (AnimPlayer *)0x0 &&
+          (a2 = (AnimPlayer *)a1->f_00_my_link, -1 < val)) && (a2->f_04_maybe_id != val))) {
+    a1 = a1->f_08_other_ap;
+  }
+  return a2;
+}
+
+
+
+
+
+int f_8001644c_anim_maybe_remove(EntData1C *dd,int ii)
+
+{
+  AnimPlayer *ap;
+  int r;
+  
+  ap = f_800161e0_ap_find(dd,ii);
+  r = 0x2d;
+  if (ap != (AnimPlayer *)0x0) {
+    if (((int)ap->f_20_unk < 0) && (ap->f_1c_func != (PFN_ANIM_PLAYER_CB *)0x0)) {
+      (*ap->f_1c_func)(dd,0x80000000,ap->f_24_ptr_data_for_cb);
+    }
+    f_80026560_list_remove_elem(&dd->f_20_list_ap,ap->f_00_my_link);
+    r = 0;
+    ap->f_04_maybe_id = -1;
+    ap->f_00_my_link = (ListElem *)0x0;
+    ap->f_2c_u3 = -1;
+    ap->f_08_other_ap = (AnimPlayer *)((uint)ap->f_08_other_ap & 0xafffffff);
+  }
+  return r;
+}
+
+
+
+
+int f_80012e84_an2(Cam1E0 *cam,EntData1C *dd)
+
+{
+  AnimPlayer *ap;
+  
+  if (cam->f14_i == 0) {
+    if (dd == (EntData1C *)0x0) {
+      return 1;
+    }
+    if (dd->f_00_my_link != (ListElem *)0x0) {
+      if ((dd->f_10_ptr_md->f_28_fla & 0x400000) != 0) {
+        while (ap = f_800161e0_ap_find(dd,-1), ap != (AnimPlayer *)0x0) {
+          f_8001644c_anim_maybe_remove(dd,(int)ap->f_04_maybe_id);
+        }
+      }
+      f_80026560_list_remove_elem(&cam->f_8c_some_list_of_1Cs,dd->f_00_my_link);
+      dd->f_00_my_link = (ListElem *)0x0;
+    }
+  }
+  return 0;
+}
+
+
+
+
+
 //---------------------------
 
 
@@ -4091,8 +4161,6 @@ int f_80024894_allocs30_node(Node *no,Node *p2)
   long lVar3;
   int rt;
   Node *nuuu;
-  
-  //printf("allocs 30 %p %p\n", no, p2);
   
   if (no == (Node *)0x0) {
     rt = 0x18;

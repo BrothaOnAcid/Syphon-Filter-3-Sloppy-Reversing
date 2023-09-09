@@ -23,6 +23,10 @@ typedef unsigned long long  ulonglong;
 typedef struct CdlLOC CdlLOC;
 typedef struct CdlFILE CdlFILE;
 
+typedef struct GsCOORD2PARAM GsCOORD2PARAM;
+typedef struct GsCOORDINATE2 GsCOORDINATE2;
+typedef struct GsVIEW2 GsVIEW2;
+
 #define FNC
 
 #define false (0)
@@ -97,6 +101,26 @@ struct CdlFILE {
 };
 
 
+struct GsCOORD2PARAM {
+    VECTOR scale;
+    SVECTOR rotate;
+    VECTOR trans;
+};
+
+struct GsCOORDINATE2 {
+    ulong flg;
+    MATRIX coord;
+    MATRIX workm;
+    GsCOORD2PARAM * param;
+    GsCOORDINATE2 * super;
+    GsCOORDINATE2 * sub;
+};
+
+struct GsVIEW2 {
+    MATRIX view;
+    GsCOORDINATE2 * super;
+};
+
 
 
 //--------------------------------
@@ -121,6 +145,10 @@ typedef struct Node         Node;
 typedef struct ListElem     ListElem;
 typedef struct DaList       DaList;
 typedef struct AnimPlayer   AnimPlayer;
+
+typedef struct MaybeMd78    MaybeMd78;
+typedef struct XfSht        XfSht;
+typedef struct EntData1C    EntData1C;
 
 
 
@@ -1039,18 +1067,20 @@ struct DaList {
 };
 
 
+typedef void (*PFN_ANIM_PLAYER_CB)(EntData1C * , uint , void * );
+
 
 // anim playback state    sizeof 0xAC
-struct AnimPlayer
-{
+struct AnimPlayer {
     ListElem * f_00_my_link;
-    uint f_04;
-    uint f_08;
+    short f_04_maybe_id;
+    short f_06_fld;
+    AnimPlayer * f_08_other_ap;
     byte * f_0c_an_data_start;
     byte * f_10_an_data_cur;
     int f_14_frame;
     int f_18_neg;
-    void* f_1c_func;
+    PFN_ANIM_PLAYER_CB f_1c_func;
     uint f_20_unk;
     byte * f_24_ptr_data_for_cb;
     int f_28_flg;
@@ -1065,9 +1095,7 @@ struct AnimPlayer
 
 
 
-typedef struct MaybeMd78    MaybeMd78;
-typedef struct XfSht        XfSht;
-typedef struct EntData1C    EntData1C;
+
 
 
 // model instance ?
@@ -1167,7 +1195,7 @@ struct XfSht {
 
 
 
-// entity related
+// entity related.  
 struct EntData1C
 {
     ListElem * f_00_my_link;
@@ -1182,34 +1210,15 @@ struct EntData1C
     MaybeMd78 * f_10_ptr_md;
     uint f_14_flfl;
     Node * * f_18_ptr_arr_nodes;
+    
+    //---------
+    
+    uint f_1c_ex_unk;
+    DaList f_20_list_ap;
 };
 
 
 
-typedef struct GsCOORD2PARAM GsCOORD2PARAM;
-typedef struct GsCOORDINATE2 GsCOORDINATE2;
-typedef struct GsVIEW2 GsVIEW2;
-
-struct GsCOORD2PARAM {
-    VECTOR scale;
-    SVECTOR rotate;
-    VECTOR trans;
-};
-
-struct GsCOORDINATE2 {
-    ulong flg;
-    MATRIX coord;
-    MATRIX workm;
-    GsCOORD2PARAM * param;
-    GsCOORDINATE2 * super;
-    GsCOORDINATE2 * sub;
-};
-
-
-struct GsVIEW2 {
-    MATRIX view;
-    GsCOORDINATE2 * super;
-};
 
 
 

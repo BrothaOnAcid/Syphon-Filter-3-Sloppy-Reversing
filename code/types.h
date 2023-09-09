@@ -314,7 +314,7 @@ struct HeadMID {
 
 
 
-typedef void (*PFN_CHAN)(int, HeadMID*, int);
+typedef void (*PFN_CHAN)(uint, HeadMID*, int);
 
 
 struct SndChan {

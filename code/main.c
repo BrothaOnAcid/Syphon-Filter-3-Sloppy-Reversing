@@ -179,8 +179,6 @@ void f_800ff758_snd_mmid2(HeadMMID *m)
   HeadSBNK *sb;
   int i2;
   
-  printf("mmid2 help.. %p\n", m);
-  
   sb = g_80122154_snd_banks;
   if (g_80122154_snd_banks != (HeadSBNK *)0x0) {
     do {
@@ -213,8 +211,6 @@ void f_800ff5a8_snd_mmid_recs(byte *data)
   HeadMID *m2;
   byte *b;
   int ii;
-  
-  printf("snd mmid recs %p\n", data);
   
   if (g_8012215c_iv5 == 0) {
     f_800ff758_snd_mmid2((HeadMMID *)data);
@@ -249,6 +245,46 @@ void f_800ff5a8_snd_mmid_recs(byte *data)
   }
   return;
 }
+
+
+
+
+void f_800fcb1c_snd_chan_cb_sht(uint m,HeadMID *mid,int arg3)
+{
+
+  if ((arg3 < 5) && (0 < arg3)) {
+    mid->f_1c_rt_juice_cur = (byte *)((uint)mid->f_1c_rt_juice_cur & ~(1 << (m & 0x1f)));
+  }
+  return;
+}
+
+
+
+
+int f_800fc9f0_sbank_check(HeadSBNK *sb,int i)
+{
+  BankEnt *ee;
+  int q;
+  
+  if ((((sb != (HeadSBNK *)0x0) && (i < sb->f_18_s)) && (-1 < i)) &&
+     (ee = sb->f_20_ents + i, ee->f_04_my != (HeadSBNK *)0x0)) {
+    q = ee->f_00_i;
+    if (q == 4) {
+      return (uint)(ee->f_10_i == 0);
+    }
+    if (q < 5) {
+      if (q == 3) {
+        return 1;
+      }
+    }
+    else if (q == 5) {
+      return 1;
+    }
+    return 0;
+  }
+  return 0;
+}
+
 
 
 
@@ -1157,18 +1193,20 @@ void f_8009f5ac_mtx_shuff4(MATRIX *m)
 
 
 
-void f_80100038_sndchan_destroy(int i)
+
+void f_80100038_sndchan_destr(uint i)
 {
   PFN_CHAN ff;
   
-  SpuSetKey(0,1 << (i & 0x1fU));
+  SpuSetKey(0,1 << (i & 0x1f));
   ff = g_80145ac0_chans[i].f44_ptr_code;
   g_80145ac0_chans[i].f00_first = 0;
-  if (ff) {
+  if (ff != 0x0) {
     (*ff)(i,g_80145ac0_chans[i].f_40_my_mid,4);
   }
   return;
 }
+
 
 
 
@@ -1261,6 +1299,44 @@ int f_80107a94_snd_get_unk99(void)
 {
   return g_801221b0_snd_rela99;
 }
+
+
+
+
+
+void f_800fcb4c_snd_cha_sb_unks(HeadSBNK *sb)
+{
+  SndChan *ch;
+  int ii;
+  uint i;
+  
+  printf("unkzzz %p\n", sb);
+  
+  if (sb != 0x0) {
+    ii = 0;
+    if (0 < sb->f_18_s) {
+      do {
+        f_800fc774_sbank_dunno(sb,ii);
+        ii = ii + 1;
+      } while (ii < sb->f_18_s);
+    }
+    i = 0;
+    do {
+      ch = f_80100318_snd_chan_by_index(i);
+      if (ch->f44_ptr_code == f_800fcb1c_snd_chan_cb_sht) {
+        if (((HeadMID *)sb->f_20_ents <= ch->f_40_my_mid) &&
+           (ch->f_40_my_mid <=
+            (HeadMID *)((int)(HeadMID *)sb->f_20_ents + sb->f_18_s * 0x24 + -0x24))) {
+          f_80100038_sndchan_destr(i);
+        }
+      }
+      i = i + 1;
+    } while ((int)i < 0x18);
+  }
+  return;
+}
+
+
 
 
 

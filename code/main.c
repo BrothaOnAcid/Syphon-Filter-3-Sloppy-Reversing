@@ -3979,6 +3979,66 @@ void f_800183b8_ed_md_set_hmd(EntData1C *dd)
 
 
 
+int f_8002497c_nodes_two(Node *no,Node *no2)
+{
+  int r;
+  MATRIX mmm;
+  
+  if (no == (Node *)0x0) {
+    if (no2 == (Node *)0x0) {
+      return 0x18;
+    }
+  }
+  else if (no2 == (Node *)0x0) goto LAB_800249d8;
+  if (no2->f_20_n1 == (Node *)0x0) {
+    if (no == (Node *)0x0) {
+      return 0;
+    }
+    r = f_80024894_allocs30_node(no2,(Node *)0x0);
+    if (r != 0) {
+      return r;
+    }
+  }
+LAB_800249d8:
+  if (no == (Node *)0x0) {
+    return 0;
+  }
+  if (no->f_20_n1 == (Node *)0x0) {
+    if ((no2 != (Node *)0x0) && (r = f_80024894_allocs30_node(no,no2), r != 0)) {
+      return r;
+    }
+  }
+  else {
+    f_80024c14_node_calc_all(no);
+    if (no->f_20_n1->f_20_n1 != (Node *)0x0) {
+      f_80024b28_node_shuff(no);
+    }
+    no->f_20_n1->f_20_n1 = no2;
+    if (no2 != (Node *)0x0) {
+      no->f_20_n1->f_24_n2 = no2->f_20_n1->f_24_n3;
+      no2->f_20_n1->f_24_n3 = no;
+    }
+    mmm.m[0] = (no->f_00_mtx).m[0];
+    mmm.m[1] = -(no->f_00_mtx).m[1];
+    mmm.m[2] = (no->f_00_mtx).m[2];
+    mmm.m[3] = -(no->f_00_mtx).m[3];
+    mmm.m[4] = (no->f_00_mtx).m[4];
+    mmm.m[5] = -(no->f_00_mtx).m[5];
+    mmm.m[6] = (no->f_00_mtx).m[6];
+    mmm.m[7] = -(no->f_00_mtx).m[7];
+    mmm.m[8] = (no->f_00_mtx).m[8];
+    mmm.t[0] = (no->f_00_mtx).t[0];
+    mmm.t[1] = -(no->f_00_mtx).t[1];
+    mmm.t[2] = (no->f_00_mtx).t[2];
+    f_800254ec_node_mtx(no,(Node *)0x0,&mmm);
+  }
+  return 0;
+}
+
+
+
+
+
 int f_800247a4_node_cr_root(XfSht *xf)
 {
   undefined4 uVar1;
@@ -4014,6 +4074,56 @@ int f_800247a4_node_cr_root(XfSht *xf)
   return rr;
 }
 
+
+
+
+
+int f_80024894_allocs30_node(Node *no,Node *p2)
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  long lVar3;
+  int rt;
+  Node *nuuu;
+  
+  //printf("allocs 30 %p %p\n", no, p2);
+  
+  if (no == (Node *)0x0) {
+    rt = 0x18;
+  }
+  else {
+    rt = 1;
+    if (no->f_20_n1 == (Node *)0x0) {
+      nuuu = (Node *)f_80026274_heap_alloc(0x30);
+      no->f_20_n1 = nuuu;
+      uVar2 = __EvilGet8_4( &g_8010f0d0_mtx_ident );
+      uVar1 = __EvilGet4_4( &g_8010f0d0_mtx_ident );
+      if (nuuu == (Node *)0x0) {
+        rt = 3;
+      }
+      else {
+        *(undefined4 *)(nuuu->f_00_mtx).m = __EvilGet0_4( &g_8010f0d0_mtx_ident );
+        *(undefined4 *)((nuuu->f_00_mtx).m + 2) = uVar1;
+        *(undefined4 *)((nuuu->f_00_mtx).m + 4) = uVar2;
+        lVar3 = g_8010f0d0_mtx_ident.t[0];
+        uVar1 = __EvilGet16_4( &g_8010f0d0_mtx_ident );
+        *(undefined4 *)((nuuu->f_00_mtx).m + 6) = __EvilGet12_4( &g_8010f0d0_mtx_ident );
+        *(undefined4 *)((nuuu->f_00_mtx).m + 8) = uVar1;
+        (nuuu->f_00_mtx).t[0] = lVar3;
+        lVar3 = g_8010f0d0_mtx_ident.t[2];
+        (nuuu->f_00_mtx).t[1] = g_8010f0d0_mtx_ident.t[1];
+        (nuuu->f_00_mtx).t[2] = lVar3;
+        no->f_20_n1->f_20_n1 = (Node *)0x0;
+        no->f_20_n1->f_24_n2 = (Node *)0x0;
+        no->f_20_n1->f_24_n3 = (Node *)0x0;
+        no->f_20_n1->f_2c_b0 = 0;
+        f_8002497c_nodes_two(no,p2);
+        rt = 0;
+      }
+    }
+  }
+  return rt;
+}
 
 
 

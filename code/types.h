@@ -1185,6 +1185,63 @@ struct EntData1C
 };
 
 
+
+typedef struct GsCOORD2PARAM GsCOORD2PARAM;
+typedef struct GsCOORDINATE2 GsCOORDINATE2;
+typedef struct GsVIEW2 GsVIEW2;
+
+struct GsCOORD2PARAM {
+    VECTOR scale;
+    SVECTOR rotate;
+    VECTOR trans;
+};
+
+struct GsCOORDINATE2 {
+    ulong flg;
+    MATRIX coord;
+    MATRIX workm;
+    GsCOORD2PARAM * param;
+    GsCOORDINATE2 * super;
+    GsCOORDINATE2 * sub;
+};
+
+
+struct GsVIEW2 {
+    MATRIX view;
+    GsCOORDINATE2 * super;
+};
+
+
+
+typedef struct Ano0x78 Ano0x78;
+
+struct Ano0x78 {
+    Node * f_00_node;
+    byte * f_04_allocated_1c20;
+    undefined field2_0x8;
+    undefined field3_0x9;
+    undefined field4_0xa;
+    undefined field5_0xb;
+    undefined field6_0xc;
+    undefined field7_0xd;
+    undefined field8_0xe;
+    undefined field9_0xf;
+    GsCOORDINATE2 * f_10_p_cord;
+    int f14_i;
+    GsCOORDINATE2 f18_coord;
+    GsVIEW2 f_68_view;
+    DaList f_8c_some_list_of_1Cs;
+    undefined field15_0x90;
+    undefined field16_0x91;
+    undefined field17_0x92;
+    undefined field18_0x93;
+    undefined field19_0x94;
+    undefined field20_0x95;
+    undefined field21_0x96;
+    undefined field22_0x97;
+};
+
+
 //--------------------------- mad skillz
 
 inline ushort __EvilGet2_2(void* src)

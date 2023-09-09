@@ -6,6 +6,7 @@
 
 
 
+#define f_80010c44_nodes_gte     ( (int(FNC*)(Node*,Node*,Node*)) 0x80010c44 )
 
 #define f_800fc774_sbank_dunno   ( (void(FNC*)(HeadSBNK*,int)) 0x800fc774 )
 #define f_801078a4_spu_voice_env ( (int(FNC*)(void)) 0x801078a4 )
@@ -63,12 +64,11 @@ typedef int ARR_TMP1[4];
 
 
 #define g_8012197c_list_of_1Cs          EXTEXT(0x8012197c,DaList)
-
+#define g_801219e0_cnt_some             EXTEXT(0x801219e0,short)
+#define g_801219e2_md_count             EXTEXT(0x801219e2,short)
 
 #define g_80121b24_list_elem_free       EXTEXT(0x80121b24,ListElem*)
 #define g_80121b28_list_elem_tot_cnt    EXTEXT(0x80121b28,short)
-
-
 
 
 
@@ -105,6 +105,8 @@ typedef int ARR_TMP1[4];
 
 
 
+
+
 #define g_80122170_snd_x1               EXTEXT(0x80122170,int)
 #define g_80122174_snd_cb_x2            EXTEXT(0x80122174,PFN_VOID)
 #define g_80122178_snd_some_mask        EXTEXT(0x80122178,uint)
@@ -124,6 +126,8 @@ typedef int ARR_TMP1[4];
 
 
 
+#define g_80122204_md_array2             EXTEXT(0x80122204,byte**)
+#define g_80122220_ptr_to_array_of_mds   EXTEXT(0x80122220,MaybeMd78**)
 
 #define g_80122234_hmd_re1              EXTEXT(0x80122234,short)
 
@@ -3957,8 +3961,6 @@ int f_800182f4_model_setup(MaybeMd78 *ss,byte *data)
 
 void f_80018384_ed_wraps_mdl_setup(EntData1C *dd)
 {
-    printf("f_80018384_ed_wraps_mdl_setup %p\n", dd);
-    
   dd->f_0a_u1 = dd->f_0a_u1 | 4;
   f_800182f4_model_setup(dd->f_10_ptr_md,dd->f_10_ptr_md->f_24_ptpt);
   return;
@@ -3969,7 +3971,6 @@ void f_80018384_ed_wraps_mdl_setup(EntData1C *dd)
 
 void f_800183b8_ed_md_set_hmd(EntData1C *dd)
 {
-    printf("xxxx hmd %p\n", dd);
   dd->f_0a_u1 = dd->f_0a_u1 & 0xfb;
   f_800182f4_model_setup(dd->f_10_ptr_md,(byte *)dd->f_10_ptr_md->f_20_ptr_hmd);
   return;
@@ -4128,10 +4129,265 @@ int f_80024894_allocs30_node(Node *no,Node *p2)
 
 
 
+int f_80024838_create_root_wrap(XfSht *xfxf,Node *n2)
+{
+  int r;
+  
+  r = f_800247a4_node_cr_root(xfxf);
+  if ((r == 0) && (r = f_80024894_allocs30_node(xfxf->nodes,n2), r == 0)) {
+    r = 0;
+  }
+  return r;
+}
+
+
+
+
+
+
+int f_80010f30_nodes_recursive_s(Node *no,uint a1)
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  undefined4 uVar3;
+  undefined4 uVar4;
+  long i1;
+  long i2;
+  long i3;
+  Node *n2;
+  Node *n0;
+  uint uVar5;
+  Node *n1;
+  
+  if ((no == (Node *)0x0) || (n1 = no->f_20_n1, n1 == (Node *)0x0)) {
+    return 0x2b;
+  }
+  n2 = n1->f_24_n3;
+  uVar5 = *(uint *)&n1->f_2c_b0;
+  if (n1->f_24_n2 != (Node *)0x0) {
+    f_80010f30_nodes_recursive_s(n1->f_24_n2,a1);
+  }
+  uVar5 = uVar5 | a1;
+  n0 = n1->f_20_n1;
+  if (uVar5 == 0) {
+    if (n2 == (Node *)0x0) {
+      if (n0 != (Node *)0x0) goto LAB_80011044;
+      goto LAB_80010fe8;
+    }
+  }
+  else if (n0 == (Node *)0x0) {
+LAB_80010fe8:
+    uVar1 = *(undefined4 *)((n1->f_00_mtx).m + 2);
+    uVar2 = *(undefined4 *)((n1->f_00_mtx).m + 4);
+    uVar3 = *(undefined4 *)((n1->f_00_mtx).m + 6);
+    uVar4 = *(undefined4 *)((n1->f_00_mtx).m + 8);
+    i1 = (n1->f_00_mtx).t[0];
+    i2 = (n1->f_00_mtx).t[1];
+    i3 = (n1->f_00_mtx).t[2];
+    *(undefined4 *)(no->f_00_mtx).m = *(undefined4 *)(n1->f_00_mtx).m;
+    *(undefined4 *)((no->f_00_mtx).m + 2) = uVar1;
+    *(undefined4 *)((no->f_00_mtx).m + 4) = uVar2;
+    *(undefined4 *)((no->f_00_mtx).m + 6) = uVar3;
+    *(undefined4 *)((no->f_00_mtx).m + 8) = uVar4;
+    (no->f_00_mtx).t[0] = i1;
+    (no->f_00_mtx).t[1] = i2;
+    (no->f_00_mtx).t[2] = i3;
+  }
+  else {
+    f_80010c44_nodes_gte(n0,n1,no);
+    if (n2 == (Node *)0x0) goto LAB_80011044;
+  }
+  if (n2 != (Node *)0x0) {
+    f_80010f30_nodes_recursive_s(n2,uVar5);
+  }
+LAB_80011044:
+  *(undefined4 *)&n1->f_2c_b0 = 0;
+  return 0;
+}
+
+
+
+int f_80011084_no1(Node *nn)
+{
+  int i1;
+  Node *n1;
+  Node *n2;
+  
+  if (nn == (Node *)0x0) {
+    i1 = 0;
+  }
+  else {
+    do {
+      n1 = nn;
+      n2 = n1->f_20_n1;
+      if (n2 == (Node *)0x0) {
+        return 0x2b;
+      }
+      nn = n2->f_20_n1;
+    } while (nn != (Node *)0x0);
+    i1 = f_80010f30_nodes_recursive_s(n1,0);
+  }
+  return i1;
+}
+
+
+
+
+void f_8002da48_node_cr_rt(XfSht *xf,Node *npa)
+{
+  Node *nn;
+  MATRIX loc;
+  
+  printf("cr rt.. %p %p\n", xf, npa);
+  
+  if ((xf != (XfSht *)0x0) && (nn = xf->nodes, nn != (Node *)0x0)) {
+    loc.m[0] = (nn->f_00_mtx).m[0];
+    loc.m[1] = -(nn->f_00_mtx).m[1];
+    loc.m[2] = (nn->f_00_mtx).m[2];
+    loc.m[3] = -(nn->f_00_mtx).m[3];
+    loc.m[4] = (nn->f_00_mtx).m[4];
+    loc.m[5] = -(nn->f_00_mtx).m[5];
+    loc.m[6] = (nn->f_00_mtx).m[6];
+    loc.m[7] = -(nn->f_00_mtx).m[7];
+    loc.m[8] = (nn->f_00_mtx).m[8];
+    loc.t[0] = (nn->f_00_mtx).t[0];
+    loc.t[1] = -(nn->f_00_mtx).t[1];
+    loc.t[2] = (nn->f_00_mtx).t[2];
+    f_80024838_create_root_wrap(xf,npa);
+    f_800254ec_node_mtx(xf->nodes,(Node *)0x0,&loc);
+    f_80011084_no1(xf->nodes);
+  }
+  return;
+}
+
+
+
+
+
+
+int f_800183ec_md_iters1(EntData1C *ddd,byte *loaded)
+{
+  MaybeMd78 **p1;
+  int iVar1;
+  byte **p2;
+  
+  iVar1 = 0;
+  p1 = g_80122220_ptr_to_array_of_mds;
+  p2 = g_80122204_md_array2;
+  if (0 < g_801219e0_cnt_some) {
+    do {
+      if (*p2 == (byte *)0x0) {
+        return 0xf;
+      }
+      iVar1 = iVar1 + 1;
+      if (*p2 == loaded) {
+        ddd->f_10_ptr_md = *p1;
+        return 0;
+      }
+      p1 = p1 + 1;
+      p2 = p2 + 1;
+    } while (iVar1 < g_801219e0_cnt_some);
+  }
+  return 0xf;
+}
+
+void f_800a64c8_hmd_shuffs(HmdHead *hmd,EntData1C *dd)
+{
+  int *p1;
+  char *cc;
+  uint u1;
+  HmdHead *qqq;
+  int i7;
+  
+  if (hmd->f_02_unk2 != -1) {
+    hmd->f_02_unk2 = -1;
+    i7 = 3;
+    cc = hmd[0x4cc].f_1c_name + 4;
+    p1 = &hmd->f_0c_u1;
+    do {
+      p1[0x23] = (int)cc;
+      cc = cc + -0x4000;
+      i7 = i7 + -1;
+      p1 = p1 + -1;
+    } while (-1 < i7);
+    i7 = 0;
+    qqq = hmd;
+    do {
+      u1 = qqq->f_04_num_bones;
+      if (((u1 != 0xffffffff) && (u1 != 0)) && (0 < (int)u1)) {
+        qqq->f_04_num_bones = *(int *)(hmd[3].f_1c_name + (u1 >> 0xe) * 4 + -8) + (u1 & 0x3fff);
+      }
+      i7 = i7 + 1;
+      qqq = (HmdHead *)&qqq->f_04_num_bones;
+    } while (i7 < 0x21);
+  }
+  f_8001c0b0_hmd_setups(hmd,dd->f_10_ptr_md);
+  return;
+}
+
+
+
+int f_80012de8_link_ed(Ano0x78 *unk,EntData1C *ddd)
+{
+  ListElem *qq;
+  uint u1;
+  
+  if (unk->f14_i == 0) {
+    if (ddd == (EntData1C *)0x0) {
+      return 1;
+    }
+    if (ddd->f_00_my_link != (ListElem *)0x0) {
+      return 0;
+    }
+    u1 = ddd->f_10_ptr_md->f_28_fla;
+    if ((u1 & 0x800000) != 0) {
+      return 0;
+    }
+    if ((u1 & 0x2400000) == 0x400000) {
+      *(byte *)&ddd->f_08_fla = *(byte *)&ddd->f_08_fla | 0x10;
+    }
+    qq = f_80026460_list_add(&unk->f_8c_some_list_of_1Cs,ddd);
+    ddd->f_00_my_link = qq;
+  }
+  return 0;
+}
+
+
 
 
 
 #include "init_ovl.c"
+
+
+
+
+typedef Ano0x78 ARR_UNKUNK_TEMP[4];
+#define g_80123660_arr_things                EXTEXT(0x80123660,ARR_UNKUNK_TEMP)
+
+
+
+
+
+
+EntData1C * f_8003870c_create9(uint *not_sure,HmdHead *hmd)
+
+{
+  XfSht xf;
+  EntData1C *dd;
+  
+  printf("create 9..\n");
+  
+  f_800247a4_node_cr_root(&xf);
+  f_init_ovl_8016cf84_creation1(hmd,xf.nodes,0x1300000,&dd);
+  f_800a64c8_hmd_shuffs(hmd,dd);
+  hmd->f_02_unk2 = 0xf0;
+  dd->f_18_ptr_arr_nodes = (Node **)*not_sure;
+  f_80012de8_link_ed(g_80123660_arr_things,dd);
+  return dd;
+}
+
+
+
 
 
 

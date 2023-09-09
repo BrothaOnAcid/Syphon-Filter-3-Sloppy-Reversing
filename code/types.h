@@ -311,7 +311,7 @@ struct HeadMID {
     HeadMID * f_a8_ptr_ano_mid2;
 };
 
-
+typedef void (*PFN_VOID)(void);
 
 
 typedef void (*PFN_CHAN)(uint, HeadMID*, int);

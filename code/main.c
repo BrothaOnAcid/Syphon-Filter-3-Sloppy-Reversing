@@ -8,6 +8,7 @@
 
 
 #define f_800fc774_sbank_dunno   ( (void(FNC*)(HeadSBNK*,int)) 0x800fc774 )
+#define f_801078a4_spu_voice_env ( (int(FNC*)(void)) 0x801078a4 )
 
 #define ratan2   	             ( (int(FNC*)(int,int)) 0x800f2fc0 )
 #define ApplyMatrixLV            ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
@@ -89,6 +90,11 @@ typedef int ARR_TMP1[4];
 
 #define g_80122168_voice_env_req        EXTEXT(0x80122168,int)
 
+
+
+
+#define g_80122170_snd_x1               EXTEXT(0x80122170,int)
+#define g_80122174_snd_cb_x2            EXTEXT(0x80122174,PFN_VOID)
 #define g_80122178_snd_some_mask        EXTEXT(0x80122178,uint)
 #define g_8012217c_snd_mask2            EXTEXT(0x8012217c,uint)
 #define g_80122180_snd_msk4             EXTEXT(0x80122180,uint)
@@ -99,6 +105,10 @@ typedef int ARR_TMP1[4];
 #define g_8012218c_current_MID_ptr      EXTEXT(0x8012218c,HeadMID*)
 #define g_80122190_midi_u9              EXTEXT(0x80122190,int)
 #define g_801221b0_snd_rela99           EXTEXT(0x801221b0,int)
+
+
+
+
 
 
 
@@ -659,6 +669,15 @@ int f_801007e0_snd_mid4(HeadMID *mid,int aa,int bb)
     iVar1 = 1;
   }
   return iVar1;
+}
+
+
+
+
+void f_80100964_mid_set_u2(HeadMID *m,uint vvv)
+{
+  m->f_40_unkunk = m->f_40_unkunk | (ushort)(1 << (vvv & 0x1f));
+  return;
 }
 
 
@@ -1427,6 +1446,8 @@ void f_801000a0_snd_chan_prio_destr(int chanInd)
 
 
 
+
+
 int f_800fee3c_snd_he3(uint uu)
 {
   int i1;
@@ -1442,6 +1463,66 @@ int f_800fee3c_snd_he3(uint uu)
   }
   return ((int)((u2 - 0x40) * 0x5a) / 0x3f) * 0x10000 >> 0x10;
 }
+
+
+
+
+void f_800ffbec_snd_callbacks(void)
+{
+  PFN_VOID ff;
+  
+  ff = g_80122174_snd_cb_x2;
+  g_80122170_snd_x1 = 0;
+  if (g_80122174_snd_cb_x2 != 0x0) {
+    g_80122174_snd_cb_x2 = 0x0;
+    (*ff)();
+  }
+  if (g_80122168_voice_env_req != 0) {
+    f_801078a4_spu_voice_env();
+    g_80122168_voice_env_req = 0;
+  }
+  return;
+}
+
+
+
+int f_800ffbbc_snd_set_cb_x2(PFN_VOID cb)
+{
+  if (g_80122170_snd_x1 != 0) {
+    if (cb != 0x0) {
+      g_80122174_snd_cb_x2 = cb;
+    }
+    return 0;
+  }
+  g_80122170_snd_x1 = 1;
+  return 1;
+}
+
+
+
+
+void f_80101764_mid_he2(HeadMID *mid)
+{
+  SndChan *chan;
+  int ind;
+  uint uVar1;
+  
+  ind = 0;
+  uVar1 = mid->f_07_s3 & 0xf;
+  mid->f_42_msk1 = mid->f_42_msk1 & ~(ushort)(1 << uVar1);
+  f_800ffbbc_snd_set_cb_x2( 0x0 );
+  do {
+    chan = f_80100318_snd_chan_by_index(ind);
+    if ((((chan->f00_first == 1) && (chan->f_40_my_mid == mid)) && ((int)chan->f_10_mini == uVar1))
+       && (chan->f_14_i == 1)) {
+      f_801001c4_snd_chan_he2(ind);
+    }
+    ind = ind + 1;
+  } while (ind < 0x18);
+  f_800ffbec_snd_callbacks();
+  return;
+}
+
 
 
 

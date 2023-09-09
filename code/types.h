@@ -1215,6 +1215,7 @@ struct EntData1C
     
     uint f_1c_ex_unk;
     DaList f_20_list_ap;
+    SVECTOR* f_24_decoded_bones;
 };
 
 
@@ -1550,6 +1551,19 @@ struct Cam1E0 {
 
 
 //--------------------------- mad skillz
+
+
+inline uint CONCAT22(ushort aa, ushort bb)
+{
+    return (aa << 16) | (bb); 
+}
+
+
+inline ushort CONCAT11(byte aa, byte bb)
+{
+    return (aa << 8) | (bb); 
+}
+
 
 inline ushort __EvilGet2_2(void* src)
 {

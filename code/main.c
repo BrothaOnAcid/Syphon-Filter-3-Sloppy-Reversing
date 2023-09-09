@@ -63,12 +63,15 @@ typedef int ARR_TMP1[4];
 #define g_8011fcb0_ar_vol_sht           EXTEXT(0x8011fcb0,ARR_TMP1)
 
 
+#define g_80121958_rend_dist_val        EXTEXT(0x80121958,int)
+
 #define g_8012197c_list_of_1Cs          EXTEXT(0x8012197c,DaList)
 #define g_801219e0_cnt_some             EXTEXT(0x801219e0,short)
 #define g_801219e2_md_count             EXTEXT(0x801219e2,short)
 
 #define g_80121b24_list_elem_free       EXTEXT(0x80121b24,ListElem*)
 #define g_80121b28_list_elem_tot_cnt    EXTEXT(0x80121b28,short)
+
 
 
 
@@ -1846,6 +1849,17 @@ void f_80057e04_wpn_two_shorts(DonkSub1 *s,short s1,short s2)
   s->f_02_sho2 = s2;
   return;
 }
+
+
+
+void f_80016158_set_rend_distance(short v1,int v2)
+{
+    printf("set rend dist %d %d\n", v1, v2);
+  g_80121958_rend_dist_val = v2 * 0x10000 + (int)v1;
+  return;
+}
+
+
 
 
 
@@ -3768,6 +3782,21 @@ AnimPlayer * f_800161e0_ap_find(EntData1C *dd,int val)
 
 
 
+AnimPlayer * f_80016224_ap_find2(EntData1C *dd,uint vava)
+{
+  AnimPlayer *p1;
+  AnimPlayer *qq;
+  
+  p1 = (AnimPlayer *)(dd->f_20_list_ap).first;
+  while (((qq = (AnimPlayer *)0x0, p1 != (AnimPlayer *)0x0 &&
+          (qq = (AnimPlayer *)p1->f_00_my_link, -1 < (int)vava)) && (qq->f_28_flg != vava))) {
+    p1 = p1->f_08_other_ap;
+  }
+  return qq;
+}
+
+
+
 
 
 int f_8001644c_anim_maybe_remove(EntData1C *dd,int ii)
@@ -3779,7 +3808,7 @@ int f_8001644c_anim_maybe_remove(EntData1C *dd,int ii)
   ap = f_800161e0_ap_find(dd,ii);
   r = 0x2d;
   if (ap != (AnimPlayer *)0x0) {
-    if (((int)ap->f_20_unk < 0) && (ap->f_1c_func != (PFN_ANIM_PLAYER_CB *)0x0)) {
+    if (((int)ap->f_20_unk < 0) && (ap->f_1c_func != 0x0)) {
       (*ap->f_1c_func)(dd,0x80000000,ap->f_24_ptr_data_for_cb);
     }
     f_80026560_list_remove_elem(&dd->f_20_list_ap,ap->f_00_my_link);
@@ -3817,6 +3846,137 @@ int f_80012e84_an2(Cam1E0 *cam,EntData1C *dd)
   return 0;
 }
 
+
+
+
+int f_80017660_ap_init(EntData1C *dd,int animId,uint frmShit)
+{
+  byte bVar1;
+  AnimPlayer *ap;
+  uint u1;
+  byte *by;
+  byte *b3;
+  int nbnb;
+  int i5;
+  uint y2;
+  byte *bb;
+  
+  ap = f_800161e0_ap_find(dd,animId);
+  nbnb = 0x2d;
+  if (ap != (AnimPlayer *)0x0) {
+    by = ap->f_0c_an_data_start;
+    while (nbnb = 0, *by >> 4 == 0xf) {
+      y2 = (uint)by[1];
+      if (y2 == frmShit) {
+        ap->f_10_an_data_cur = by;
+        ap->f_14_frame = y2;
+        return 0;
+      }
+      b3 = by + 2;
+      if (y2 == 0xfc) {
+        return 0x2e;
+      }
+      bb = by + 3;
+      by = by + 4;
+      i5 = 0;
+      nbnb = dd->f_10_ptr_md->f_20_ptr_hmd->f_04_num_bones;
+      u1 = (uint)CONCAT11(*b3,*bb);
+      if (0 < nbnb) {
+        do {
+          bVar1 = *by;
+          if ((u1 & 1) != 0) {
+            if ((bVar1 & 0x80) == 0) {
+              by = by + 2;
+            }
+            else if ((bVar1 & 0x40) == 0) {
+              if ((bVar1 & 0x20) == 0) {
+                by = by + 3;
+              }
+              else {
+                by = by + 6;
+              }
+            }
+            else {
+              by = by + 4;
+            }
+            if ((y2 == 1) || (i5 == 0)) {
+              by = by + 3;
+            }
+          }
+          i5 = i5 + 1;
+          u1 = u1 >> 1;
+        } while (i5 < nbnb);
+      }
+    }
+  }
+  return nbnb;
+}
+
+
+
+
+
+
+// param_5  20
+AnimPlayer * f_800162b4_anim_play(EntData1C *dd,int animId,int dunno,int fla,short param_5)
+{
+  AnimPlayer *ee;
+  ListElem *qqq;
+  AnimPlayer *p1;
+  MaybeMd78 *md;
+  int *sss;
+  
+  //printf("anim start  %d %d %d %d\n", animId, dunno, fla, param_5);
+  
+  md = dd->f_10_ptr_md;
+  if ((md->f_28_fla & 0x2000000) == 0) {
+    sss = (int *)md->f_2c_p_un[animId];
+  }
+  else {
+    sss = md->f_2c_p_un;
+  }
+  qqq = (dd->f_20_list_ap).first;
+  if (*(byte *)sss == 0xea) {
+    sss = (int *)((int)sss + (uint)*(byte *)((int)sss + 1) + (uint)*(byte *)((int)sss + 2) * 0x100);
+  }
+  while( true ) {
+    if (qqq == (ListElem *)0x0) {
+      ee = f_80016198_ap_get_free();
+      if (ee == (AnimPlayer *)0x0) {
+        ee = (AnimPlayer *)0x0;
+      }
+      else {
+        qqq = f_80026460_list_add(&dd->f_20_list_ap,ee);
+        ee->f_00_my_link = qqq;
+        ee->f_08_other_ap = (AnimPlayer *)0x40000000;
+        if (dunno != 0) {
+          ee->f_08_other_ap = (AnimPlayer *)0x50000000;
+        }
+        ee->f_0c_an_data_start = (byte *)sss;
+        ee->f_10_an_data_cur = (byte *)sss;
+        ee->f_14_frame = -1;
+        ee->f_18_neg = -1;
+        ee->f_04_maybe_id = (short)animId;
+        ee->f_06_fld = param_5;
+        ee->f_30_dunno = 0;
+        ee->f_20_unk = 0;
+        ee->f_1c_func = 0x0;
+        ee->f_24_ptr_data_for_cb =  0x0;
+        ee->f_28_flg = fla;
+        ee->f_2c_u3 = dunno;
+        f_80017660_ap_init(dd,animId,1);
+      }
+      return ee;
+    }
+    p1 = (AnimPlayer *)qqq->f00_my_data;
+    qqq = qqq->f08_prev;
+    if ((int *)p1->f_0c_an_data_start == sss) break;
+    if (((p1->f_28_flg == fla) || (fla == 0)) || (p1->f_28_flg == 0)) {
+      f_8001644c_anim_maybe_remove(dd,(int)p1->f_04_maybe_id);
+    }
+  }
+  return (AnimPlayer *)0x0;
+}
 
 
 
@@ -4424,6 +4584,23 @@ int f_80012de8_link_ed(Cam1E0 *cam,EntData1C *ddd)
     ddd->f_00_my_link = qq;
   }
   return 0;
+}
+
+
+
+
+int f_80029e88_sq_and_ratan(int ii)
+{
+  long y;
+  int r;
+  
+  r = ii * ii;
+  if (r < 0) {
+    r = r + 0xfff;
+  }
+  y = SquareRoot12(0x1000 - (r >> 0xc));
+  r = ratan2(y,ii);
+  return r;
 }
 
 

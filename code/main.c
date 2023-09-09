@@ -11,7 +11,7 @@
 
 
 
-
+#define ratan2   	             ( (int(FNC*)(int,int)) 0x800f2fc0 )
 #define ApplyMatrixLV            ( (VECTOR*(FNC*)(MATRIX*,VECTOR*,VECTOR*)) 0x800f3c60 )
 #define DrawSync   	             ( (void(FNC*)(int)) 0x800f4098 )
 #define ClearImage   	         ( (void(FNC*)(RECT*,uint,uint,uint)) 0x800f421c )
@@ -802,7 +802,7 @@ int f_80023a4c_vec_mag_xz(VECTOR *v0,int *v1)
 {
   int i1;
   int i2;
-  long i3;
+  int i3;
   
   i1 = f_80010654_longlong_mult(v0->vx,v0->vx);
   i2 = f_80010654_longlong_mult(v0->vz,v0->vz);
@@ -810,6 +810,44 @@ int f_80023a4c_vec_mag_xz(VECTOR *v0,int *v1)
   *v1 = i3;
   return 0;
 }
+
+
+
+
+
+int f_80028150_vec_mag_and_ratan(VECTOR *vec,int *out)
+{
+  int i1;
+  int hm [2];
+  
+  f_80023a4c_vec_mag_xz(vec,hm);
+  i1 = ratan2(vec->vy,hm[0]);
+  *out = -i1;
+  return 0;
+}
+
+
+
+int f_800280dc_ratan_stuff(VECTOR *vv,int *out)
+{
+  int q;
+  
+  q = SquareRoot0(vv->vx * vv->vx + vv->vz * vv->vz);
+  q = ratan2(vv->vy,q);
+  *out = -q;
+  return 0;
+}
+
+
+int f_800281a4_ratan_wrp(VECTOR *vv,int *ou)
+{
+  int i1;
+  
+  i1 = ratan2(vv->vx,vv->vz);
+  *ou = i1;
+  return 0;
+}
+
 
 
 
@@ -2937,6 +2975,78 @@ int f_800290d0_vec_node_lv_wrap(VECTOR *vv,Node *no,VECTOR *out)
   f_800239c4_vec_node_lv(vv,no,out);
   return 0;
 }
+
+
+
+int f_80027fd4_xform_xyz(VECTOR *v1,VECTOR *v2,VECTOR *out)
+{
+  long lVar1;
+  long lVar2;
+  long lVar3;
+  MATRIX mtx;
+  int tttt [4];
+  
+  if (((v1->vx == 0) && (v1->vy == 0)) && (v1->vz == 0)) {
+    lVar1 = v1->vy;
+    lVar2 = v1->vz;
+    lVar3 = v1->pad;
+    out->vx = v1->vx;
+    out->vy = lVar1;
+    out->vz = lVar2;
+    out->pad = lVar3;
+  }
+  else {
+    memset(tttt + 2,0,8);
+    tttt[0] = v2->vx & 0xffffU | v2->vy << 0x10;
+    tttt[3] = v2->vz & 0xffffU | (uint)__EvilGet2_2(&tttt[3]) << 0x10;
+    tttt[1] = tttt[3];
+    tttt[2] = tttt[0];
+    RotMatrixYXZ((SVECTOR *)tttt,&mtx);
+    ApplyTransposeMatrixLV(&mtx,v1,out);
+  }
+  return 0;
+}
+
+
+
+
+int f_800281e4_mtx_calcz99(MATRIX *m1,VECTOR *out_vc)
+{
+  long i1;
+  VECTOR v0;
+  VECTOR v1;
+  VECTOR v2;
+  VECTOR qqq;
+  
+  printf("calcz 99  %p %p\n", m1, out_vc);
+  
+  v0.vx = (long)m1->m[0];
+  v0.vy = (long)m1->m[3];
+  v0.vz = (long)m1->m[6];
+  v1.vx = (long)m1->m[1];
+  v1.vy = (long)m1->m[4];
+  v1.vz = (long)m1->m[7];
+  v2.vx = (long)m1->m[2];
+  v2.vy = (long)m1->m[5];
+  v2.vz = (long)m1->m[8];
+  f_80028150_vec_mag_and_ratan(&v2,&out_vc->vx);
+  if ((v2.vx == 0) && (v2.vz == 0)) {
+    out_vc->vy = 0;
+  }
+  else {
+    i1 = ratan2(v2.vx,v2.vz);
+    out_vc->vy = i1;
+  }
+  qqq.vx = out_vc->vx;
+  qqq.vy = out_vc->vy;
+  qqq.vz = 0;
+  f_80027fd4_xform_xyz(&v0,&qqq,&v0);
+  i1 = ratan2(v0.vy,v0.vx);
+  out_vc->vz = i1;
+  return 0;
+}
+
+
 
 
 

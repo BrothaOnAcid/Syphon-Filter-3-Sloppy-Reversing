@@ -139,6 +139,11 @@ typedef AnimPlayer ARR_ANIM_PLAYERZ[14];
 #define g_80122908_ar_anim_players      EXTEXT(0x80122908,ARR_ANIM_PLAYERZ)
 
 
+typedef Cam1E0 ARR_CAMS[3];
+#define g_80123660_arr_things           EXTEXT(0x80123660,ARR_CAMS)
+
+
+
 typedef ListElem ARR_LISTELEMPOOL[911];
 #define g_80126708_list_elem_pool       EXTEXT(0x80126708,ARR_LISTELEMPOOL)
 
@@ -4327,12 +4332,13 @@ void f_800a64c8_hmd_shuffs(HmdHead *hmd,EntData1C *dd)
 
 
 
-int f_80012de8_link_ed(Ano0x78 *unk,EntData1C *ddd)
+
+int f_80012de8_link_ed(Cam1E0 *cam,EntData1C *ddd)
 {
   ListElem *qq;
   uint u1;
   
-  if (unk->f14_i == 0) {
+  if (cam->f14_i == 0) {
     if (ddd == (EntData1C *)0x0) {
       return 1;
     }
@@ -4346,7 +4352,7 @@ int f_80012de8_link_ed(Ano0x78 *unk,EntData1C *ddd)
     if ((u1 & 0x2400000) == 0x400000) {
       *(byte *)&ddd->f_08_fla = *(byte *)&ddd->f_08_fla | 0x10;
     }
-    qq = f_80026460_list_add(&unk->f_8c_some_list_of_1Cs,ddd);
+    qq = f_80026460_list_add(&cam->f_8c_some_list_of_1Cs,ddd);
     ddd->f_00_my_link = qq;
   }
   return 0;
@@ -4358,11 +4364,6 @@ int f_80012de8_link_ed(Ano0x78 *unk,EntData1C *ddd)
 
 #include "init_ovl.c"
 
-
-
-
-typedef Ano0x78 ARR_UNKUNK_TEMP[4];
-#define g_80123660_arr_things                EXTEXT(0x80123660,ARR_UNKUNK_TEMP)
 
 
 

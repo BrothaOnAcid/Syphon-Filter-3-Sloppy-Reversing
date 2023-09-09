@@ -30,7 +30,13 @@
 #define strcmp   	             ( (int(FNC*)(char*,char*)) 0x800fb018 )
 #define ApplyMatrixSV            ( (SVECTOR*(FNC*)(MATRIX*,SVECTOR*,SVECTOR*)) 0x800fb1c8 )
 #define ScaleMatrix              ( (MATRIX*(FNC*)(MATRIX*,VECTOR*)) 0x800fb228 )
+#define SpuSetVoiceNote   	     ( (void(FNC*)(int,ushort)) 0x801085e0 )
 #define SpuSetKey   	         ( (void(FNC*)(int,uint)) 0x801087d0 )
+
+
+
+
+
 
 
 //-------- data
@@ -75,9 +81,7 @@ typedef int ARR_TMP1[4];
 
 
 
-
-
-
+#define g_8012212c_snd_i3               EXTEXT(0x8012212c,int)
 #define g_80122130_midi_speed           EXTEXT(0x80122130,uint)
 
 #define g_80122138_music_danger_timer   EXTEXT(0x80122138,int)
@@ -99,6 +103,7 @@ typedef int ARR_TMP1[4];
 #define g_8012217c_snd_mask2            EXTEXT(0x8012217c,uint)
 #define g_80122180_snd_msk4             EXTEXT(0x80122180,uint)
 #define g_80122184_snd_msk3             EXTEXT(0x80122184,uint)
+
 
 
 
@@ -1329,8 +1334,6 @@ void f_800fcb4c_snd_cha_sb_unks(HeadSBNK *sb)
   int ii;
   uint i;
   
-  printf("unkzzz %p\n", sb);
-  
   if (sb != 0x0) {
     ii = 0;
     if (0 < sb->f_18_s) {
@@ -1524,6 +1527,116 @@ void f_80101764_mid_he2(HeadMID *mid)
 }
 
 
+
+
+void f_80101678_midi_help(HeadMID *mid)
+{
+  int i1;
+  SndChan *sc;
+  int ind;
+  uint u2;
+  byte dd;
+  
+  dd = *mid->f_1c_rt_juice_cur;
+  u2 = mid->f_07_s3 & 0xf;
+  i1 = f_800ffbbc_snd_set_cb_x2( 0x0 );
+  ind = 0;
+  if (i1 != 0) {
+    do {
+      sc = f_80100318_snd_chan_by_index(ind);
+      if ((((sc->f00_first == 1) && (sc->f_40_my_mid == mid)) && ((int)sc->f_10_mini == u2)) &&
+         (sc->f_12_va == (ushort)dd)) {
+        if (((int)(short)mid->f_42_msk1 >> u2 & 1U) == 0) {
+          f_801001c4_snd_chan_he2(ind);
+        }
+        else {
+          sc->f_14_i = 1;
+        }
+      }
+      ind = ind + 1;
+    } while (ind < 0x18);
+    f_800ffbec_snd_callbacks();
+  }
+  return;
+}
+
+
+
+void f_80101878_midi_notes(HeadMID *mid)
+{
+  SndChan *sc;
+  int i3;
+  ushort us1;
+  int i1;
+  int i2;
+  uint uVar1;
+  
+  i2 = 0;
+  uVar1 = mid->f_07_s3 & 0xf;
+  mid->f_84_arr_b[uVar1] = *mid->f_1c_rt_juice_cur & 0x7f | (ushort)((mid->f_1c_rt_juice_cur[1] & 0x7f) << 7);
+       
+  f_800ffbbc_snd_set_cb_x2( 0x0 );
+  do {
+    sc = f_80100318_snd_chan_by_index(i2);
+    if (((sc->f00_first == 1) && (sc->f_40_my_mid == mid)) && ((int)sc->f_10_mini == uVar1)) {
+      us1 = sc->f_12_va;
+      i1 = mid->f_84_arr_b[uVar1] + -0x2000;
+      if (mid->f_84_arr_b[uVar1] == 0x2000) {
+        us1 = us1 << 8;
+      }
+      else {
+        if (i1 < 0) {
+          i1 = (uint)sc->f34_unk_pt[8] * i1;
+          i3 = i1;
+          if (i1 < 0) {
+            i3 = i1 + 0x1fff;
+          }
+          i1 = (i1 + (i3 >> 0xd) * -0x2000) * 0x7f;
+          if (i1 < 0) {
+            i1 = i1 + 0x1fff;
+          }
+          i1 = (i1 >> 0xd) + 0x80;
+          i3 = (i3 >> 0xd) + (uint)us1;
+          if (i1 < 0x80) {
+            i3 = i3 + -1;
+          }
+          else {
+            i1 = 0;
+          }
+        }
+        else {
+          i1 = (uint)sc->f34_unk_pt[9] * i1;
+          i3 = i1 / 0x1f80 + (uint)us1;
+          i1 = (i1 % 0x1f80) / 0x3f;
+        }
+        us1 = (ushort)(i3 << 8) | (ushort)i1;
+      }
+      SpuSetVoiceNote(i2,us1);
+    }
+    i2 = i2 + 1;
+  } while (i2 < 0x18);
+  f_800ffbec_snd_callbacks();
+  return;
+}
+
+
+
+
+int f_800fd220_snd_checks(void)
+{
+  if (g_8012212c_snd_i3 == 1) {
+    return 0x3c;
+  }
+  if (g_8012212c_snd_i3 < 2) {
+    if (g_8012212c_snd_i3 == 0) {
+      return 0x78;
+    }
+  }
+  else if (g_8012212c_snd_i3 == 2) {
+    return 0x32;
+  }
+  return 0;
+}
 
 
 

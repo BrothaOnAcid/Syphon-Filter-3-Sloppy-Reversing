@@ -344,10 +344,7 @@ struct SndChan {
     undefined field32_0x2e;
     undefined field33_0x2f;
     int f30_inte;
-    undefined field35_0x34;
-    undefined field36_0x35;
-    undefined field37_0x36;
-    undefined field38_0x37;
+    byte* f34_unk_pt;
     undefined field39_0x38;
     undefined field40_0x39;
     undefined field41_0x3a;

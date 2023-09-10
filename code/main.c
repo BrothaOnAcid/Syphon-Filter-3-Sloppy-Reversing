@@ -5,6 +5,18 @@
 //------ funcs
 
 
+// two problematic funcs !  anim data decoding. need to MATCH
+#define f_8001c8ac_anim_angs_to_mtx ( (MATRIX*(FNC*)(SVECTOR*,MATRIX*)) 0x8001c8ac )
+#define f_8001cb3c_anim_decode_core ( (byte*(FNC*)(byte*,uint,EntData1C*,uint)) 0x8001cb3c )
+
+
+//#define f_8001ab24_ed_anim_proc ( (void(FNC*)(EntData1C*)) 0x8001ab24 )
+//#define f_8001ac10_anim_decode ( (void(FNC*)(EntData1C*,AnimPlayer*,int)) 0x8001ac10 )
+
+
+
+
+
 
 #define f_80010c44_nodes_gte     ( (int(FNC*)(Node*,Node*,Node*)) 0x80010c44 )
 
@@ -141,6 +153,9 @@ typedef int ARR_TMP1[4];
 typedef AnimPlayer ARR_ANIM_PLAYERZ[14];
 #define g_80122908_ar_anim_players      EXTEXT(0x80122908,ARR_ANIM_PLAYERZ)
 
+
+
+#define g_80122354_frm_cnt              EXTEXT(0x80122354,uint)
 
 typedef Cam1E0 ARR_CAMS[3];
 #define g_80123660_arr_things           EXTEXT(0x80123660,ARR_CAMS)
@@ -4602,6 +4617,112 @@ int f_80029e88_sq_and_ratan(int ii)
   r = ratan2(y,ii);
   return r;
 }
+
+
+
+int f_8002d2a0_frm_cnt_diff(int a1,uint a2)
+{
+  return g_80122354_frm_cnt - a1 < a2 ^ 1;
+}
+
+
+
+
+
+void f_8001ac10_anim_decode(EntData1C *ed,AnimPlayer *ap,int a2)
+{
+  int i1;
+  byte *b1;
+  byte *b2;
+  uint u2;
+  HmdHead *hmd;
+  
+  b2 = ap->f_10_an_data_cur;
+  hmd = ed->f_10_ptr_md->f_20_ptr_hmd;
+  if ((*b2 & 0xf0) == 0xf0) {
+      
+    u2 = (uint)b2[1];
+    ap->f_14_frame = u2;
+    if ((u2 == 0xfc) && (((uint)ap->f_08_other_ap & 0x10000000) != 0)) {
+      b2 = ap->f_0c_an_data_start;
+      ap->f_10_an_data_cur = b2;
+      u2 = (uint)b2[1];
+      ap->f_14_frame = u2;
+    }
+    if (((((ap->f_20_unk & 0x4000000) == 0) || ((ap->f_20_unk & 0xff) != u2)) ||
+        (ap->f_1c_func == 0x0)) ||
+       (b1 = ap->f_0c_an_data_start, (*ap->f_1c_func)(ed,u2 | 0x4000000,ap->f_24_ptr_data_for_cb),
+       ap->f_0c_an_data_start == b1)) {
+      b2 = f_8001cb3c_anim_decode_core
+                     (b2 + 4,u2 << 0x10 | hmd->f_04_num_bones,ed,(uint)CONCAT11(b2[2],b2[3]));
+      ap->f_10_an_data_cur = b2;
+      if (b2[1] == 0xfc) {
+        if ((((uint)ap->f_08_other_ap & 0x10000000) == 0) ||
+           (i1 = ap->f_2c_u3 + -1, ap->f_2c_u3 = i1, i1 == 0)) {
+          f_8001644c_anim_maybe_remove(ed,(int)ap->f_04_maybe_id);
+        }
+        else if (((ap->f_20_unk & 0x10000000) != 0) && (ap->f_1c_func != 0x0))
+        {
+            printf("for cb..\n");
+          (*ap->f_1c_func)(ed,0x10000000,ap->f_24_ptr_data_for_cb);
+        }
+      }
+    }
+  }
+  return;
+}
+
+
+
+
+void f_8001ab24_ed_anim_proc(EntData1C *ed)
+{
+  int fla;
+  ListElem *elem;
+  AnimPlayer **pap;
+  void **ptrs;
+  
+  elem = (ed->f_20_list_ap).first;
+  if ((ed->f_18_ptr_arr_nodes != (Node **)0x0) && (ed->f_24_decoded_bones != (SVECTOR *)0x0)) {
+    while (elem != (ListElem *)0x0) {
+      pap = (AnimPlayer **)&elem->f00_my_data;
+      fla = (*pap)->f_28_flg;
+      elem = elem->f08_prev;
+      if ((fla == 0) || (fla == 0x4000)) {
+        f_8001ac10_anim_decode(ed,*pap,1);
+      }
+    }
+    elem = (ed->f_20_list_ap).first;
+    while (elem != (ListElem *)0x0) {
+      ptrs = &elem->f00_my_data;
+      elem = elem->f08_prev;
+      if (((AnimPlayer *)*ptrs)->f_28_flg == 0x8000) {
+        f_8001ac10_anim_decode(ed,(AnimPlayer *)*ptrs,1);
+      }
+    }
+    /*
+    if (PTR_80121a78 != (PFN_DD1 *)0x0) {
+      (*PTR_80121a78)(ed);
+    }
+    */
+  }
+  return;
+}
+
+
+void f_8001aaa8_ed_anim_re1(EntData1C *dd)
+{
+  uint u1;
+  
+  u1 = dd->f_10_ptr_md->f_28_fla;
+  if (((((u1 & 0x400000) != 0) && (dd->f_18_ptr_arr_nodes != (Node **)0x0)) &&
+      (dd->f_24_decoded_bones != (SVECTOR *)0x0)) &&
+     (((*(byte *)&dd->f_08_fla & 8) == 0 && ((u1 & 0x2000000) == 0)))) {
+    f_8001ab24_ed_anim_proc(dd);
+  }
+  return;
+}
+
 
 
 
